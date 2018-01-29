@@ -95,9 +95,11 @@ def main(_):
     # The MonitoredTrainingSession takes care of session initialization,
     # restoring from a checkpoint, saving to a checkpoint, and closing when done
     # or an error occurs.
+    # Worker with task_index = 0 is the Master Worker.
+    # checkpoint_dir=FLAGS.log_dir,
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
-                                           checkpoint_dir=FLAGS.log_dir,
+                                          
                                            hooks=hooks) as mon_sess:
       i = 0
       while not mon_sess.should_stop():
@@ -150,6 +152,6 @@ if __name__ == "__main__":
       "--log_dir",
       type=str,
       default="/tmp/train_logs",
-      help="Directory for train logs")
+     help="Directory for train logs")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
