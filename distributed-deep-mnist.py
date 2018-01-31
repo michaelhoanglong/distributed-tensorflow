@@ -51,11 +51,6 @@ def bias_variable(shape):
   initial = tf.constant(0.1, shape=shape)
   return tf.Variable(initial)
 
-def write_log(content,filename):
-  file = open(FLAGS.log_dir+'/'+filename,'w')
-  file.write(content)
-  file.close()
-
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")
@@ -106,6 +101,7 @@ def main(_):
                                            is_chief=(FLAGS.task_index == 0),
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
+      file = open(FLAGS.log_dir+'/'+filename,'a+')
       logs = ''
       filename = 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
       i = 0
@@ -116,12 +112,12 @@ def main(_):
           train_accuracy = mon_sess.run(accuracy, feed_dict={
               x: batch[0], y_: batch[1], keep_prob: 1.0})
           print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          logs += 'Global_step %s, task:%d_step %d, training accuracy %g.\n' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy)
+          file.write('Global_step %s, task:%d_step %d, training accuracy %g.\n' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
-      logs += 'Training completed!'
-      write_log(logs,filename)
+      file.write('Training completed!')
+      file.close()
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
