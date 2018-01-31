@@ -51,8 +51,8 @@ def bias_variable(shape):
   initial = tf.constant(0.1, shape=shape)
   return tf.Variable(initial)
 
-def write_log(content):
-  file = open(FLAGS.log_dir+'/training_logs.txt','w')
+def write_log(content,filename):
+  file = open(FLAGS.log_dir+'/'+filename,'w')
   lines = content.split('.')
   for i in range(len(lines)):
     lines[i] = lines[i].strip()
@@ -110,6 +110,7 @@ def main(_):
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
       logs = ''
+      filename = 'training_logs_task_' + FLAGS.task_index + '.txt'
       i = 0
       while not mon_sess.should_stop():
         # Run a training step asynchronously.
@@ -123,7 +124,7 @@ def main(_):
         i = i + 1
       print('Training completed!')
       logs += 'Training completed!'
-      write_log(logs)
+      write_log(logs,filename)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
