@@ -110,7 +110,7 @@ def main(_):
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
       logs = ''
-      filename = 'training_logs_task_' + FLAGS.task_index + '.txt'
+      filename = 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
       i = 0
       while not mon_sess.should_stop():
         # Run a training step asynchronously.
