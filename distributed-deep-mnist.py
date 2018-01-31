@@ -107,7 +107,7 @@ def main(_):
                                            is_chief=(FLAGS.task_index == 0),
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
-      
+      write_log('Training started...\n')
       i = 0
       while not mon_sess.should_stop():
         # Run a training step asynchronously.
@@ -121,7 +121,7 @@ def main(_):
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
-      write_log('Training completed!')
+      write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
