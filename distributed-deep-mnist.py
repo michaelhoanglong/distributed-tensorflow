@@ -102,7 +102,7 @@ def main(_):
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
       filename = 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
-      file = open(FLAGS.log_dir+'/'+filename,'a+')
+      file = open(FLAGS.log_dir+'/'+filename,'w')
       logs = ''
       i = 0
       while not mon_sess.should_stop():
