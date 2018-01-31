@@ -99,7 +99,7 @@ def main(_):
     # checkpoint_dir=FLAGS.log_dir,
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
-                                          
+                                           checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
       i = 0
       while not mon_sess.should_stop():
