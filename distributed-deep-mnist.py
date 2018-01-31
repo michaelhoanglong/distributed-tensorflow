@@ -53,10 +53,7 @@ def bias_variable(shape):
 
 def write_log(content,filename):
   file = open(FLAGS.log_dir+'/'+filename,'w')
-  lines = content.split('.')
-  for i in range(len(lines)):
-    lines[i] = lines[i].strip()
-  file.writelines(lines)
+  file.write(content)
   file.close()
 
 def main(_):
@@ -119,7 +116,7 @@ def main(_):
           train_accuracy = mon_sess.run(accuracy, feed_dict={
               x: batch[0], y_: batch[1], keep_prob: 1.0})
           print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          logs += 'Global_step %s, task:%d_step %d, training accuracy %g. ' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy)
+          logs += 'Global_step %s, task:%d_step %d, training accuracy %g.\n' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy)
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
