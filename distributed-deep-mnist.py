@@ -52,10 +52,10 @@ def bias_variable(shape):
   return tf.Variable(initial)
 
 def write_log(content):
-  filename = 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
-  file = open(FLAGS.log_dir+'/'+filename,'a')
-  file.write(content)
-  file.close()
+  filename = FLAGS.log_dir + '/' + 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
+  os.makedirs(os.path.dirname(filename), exist_ok=True)
+  with open(filename,'a') as file:
+    file.write(content)
 
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
