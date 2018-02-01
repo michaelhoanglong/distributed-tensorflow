@@ -1,5 +1,6 @@
 import argparse
 import sys
+import os
 
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
