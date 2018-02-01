@@ -161,7 +161,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--log_dir",
       type=str,
-      default="/home/ubuntu/s3-drive",
+      default="/home/ubuntu/s3-drive/mnist",
      help="Directory for train logs")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
