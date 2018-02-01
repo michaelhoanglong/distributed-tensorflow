@@ -53,7 +53,7 @@ def bias_variable(shape):
 
 def write_log(content):
   filename = 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
-  file = open(FLAGS.log_dir+'/'+filename,'a')
+  file = open(FLAGS.log_dir+'/'+filename,'a+')
   file.write(content)
   file.close()
 
