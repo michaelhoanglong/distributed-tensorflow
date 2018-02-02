@@ -1,6 +1,7 @@
 import argparse
 import sys
 import os
+import stat
 
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
@@ -54,7 +55,8 @@ def bias_variable(shape):
 
 def write_log(content):
   filename = FLAGS.log_dir + '/' + 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
-  os.makedirs(os.path.dirname(filename), exist_ok=True)
+  os.makedirs(os.path.dirname(FLAGS.log_dir), exist_ok=True)
+  os.chmod(FLAGS.log_dir, stat.S_IRWXO | stat.S_IRWXG | stat.S_IRWXU)
   with open(filename,'a') as file:
     file.write(content)
 
@@ -104,11 +106,11 @@ def main(_):
     # or an error occurs.
     # Worker with task_index = 0 is the Master Worker.
     # checkpoint_dir=FLAGS.log_dir,
+    write_log('Training started...\n')
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
                                            checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
-      #write_log('Training started...\n')
       i = 0
       while not mon_sess.should_stop():
         # Run a training step asynchronously.
