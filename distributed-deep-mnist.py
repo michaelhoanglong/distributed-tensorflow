@@ -106,7 +106,7 @@ def main(_):
     # or an error occurs.
     # Worker with task_index = 0 is the Master Worker.
     # checkpoint_dir=FLAGS.log_dir,
-    write_log('Training started...\n')
+    #write_log('Training started...\n')
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
                                            checkpoint_dir=FLAGS.log_dir,
@@ -120,11 +120,11 @@ def main(_):
               x: batch[0], y_: batch[1], keep_prob: 1.0})
           print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
           log = 'Global_step %s, task:%d_step %d, training accuracy %g.\n' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy)
-          write_log(log)
+          #write_log(log)
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
-      write_log('Training completed!\n\n')
+      # write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
@@ -164,7 +164,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--log_dir",
       type=str,
-      default="/home/ubuntu/s3-drive/mnist",
+      default="/home/ubuntu/log_dir",
      help="Directory for train logs")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
