@@ -152,8 +152,8 @@ def main(_):
             },
             method_name=signature_constants.PREDICT_METHOD_NAME)
 
-        legacy_init_op = tf.group(
-            tf.initialize_all_tables(), name="legacy_init_op")
+      legacy_init_op = tf.group(
+          tf.initialize_all_tables(), name="legacy_init_op")
 
     # The StopAtStepHook handles stopping after running given steps.
     hooks=[tf.train.StopAtStepHook(last_step=100)]
