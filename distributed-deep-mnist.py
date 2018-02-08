@@ -184,7 +184,7 @@ def main(_):
         i = i + 1
       print('Training completed!')
       if FLAGS.task_index == 0:
-        saved_model(mon_sess, model_signature, legacy_init_op)
+        saved_model(get_session(mon_sess), model_signature, legacy_init_op)
       # write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
