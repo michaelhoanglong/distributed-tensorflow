@@ -5,6 +5,11 @@ import stat
 
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
+from tensorflow.contrib.session_bundle import exporter
+from tensorflow.python.saved_model import builder as saved_model_builder
+from tensorflow.python.saved_model import (
+    signature_constants, signature_def_utils, tag_constants, utils)
+from tensorflow.python.util import compat
 
 FLAGS = None
 
@@ -66,6 +71,36 @@ def get_session(sess):
     session = session._sess
   return session
 
+def saved_model(sess, model_signature, legacy_init_op):
+  logging.info("Export the saved model to {}".format(FLAGS.log_dir))
+
+  sess.graph._unsafe_unfinalize()
+
+  export_path_base = FLAGS.log_dir
+  export_path = os.path.join(
+      compat.as_bytes(export_path_base),
+      # TODO: change this to model version later 
+      compat.as_bytes(str(1)))
+
+  try:
+    builder = saved_model_builder.SavedModelBuilder(export_path)
+    builder.add_meta_graph_and_variables(
+        sess,
+        [tag_constants.SERVING],
+        clear_devices=True,
+        signature_def_map={
+            signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+            model_signature,
+        },
+        #legacy_init_op=legacy_init_op)
+        legacy_init_op=legacy_init_op)
+
+    sess.graph.finalize()
+
+    builder.save()
+  except Exception as e:
+    logging.error("Fail to export saved model, exception: {}".format(e))
+
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")
@@ -91,6 +126,8 @@ def main(_):
       mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
       # Build Deep MNIST model...
+      keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
+      keys = tf.identity(keys_placeholder)
       x = tf.placeholder(tf.float32, [None, 784])
       y_ = tf.placeholder(tf.float32, [None, 10])
       y_conv, keep_prob = deepnn(x)
@@ -104,6 +141,20 @@ def main(_):
       correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
       accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
+      model_signature = signature_def_utils.build_signature_def(
+            inputs={
+                "keys": utils.build_tensor_info(keys_placeholder),
+                "features": utils.build_tensor_info(x)
+            },
+            outputs={
+                "keys": utils.build_tensor_info(keys),
+                "prediction": utils.build_tensor_info(correct_prediction)
+            },
+            method_name=signature_constants.PREDICT_METHOD_NAME)
+
+        legacy_init_op = tf.group(
+            tf.initialize_all_tables(), name="legacy_init_op")
+
     # The StopAtStepHook handles stopping after running given steps.
     hooks=[tf.train.StopAtStepHook(last_step=100)]
 
@@ -114,6 +165,7 @@ def main(_):
     # checkpoint_dir=FLAGS.log_dir,
     # write_log('Training started...\n')
     saver = tf.train.Saver()
+
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
                                            hooks=hooks) as mon_sess:
@@ -129,8 +181,9 @@ def main(_):
           #write_log(log)
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
+        if FLAGS.task_index == 0:
+          saved_model(mon_sess, model_signature, legacy_init_op)
       print('Training completed!')
-      saver.save(get_session(mon_sess), '/home/ubuntu/log_dir/model.ckpt')
       # write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
