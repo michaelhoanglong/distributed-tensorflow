@@ -61,7 +61,7 @@ def write_log(content):
     file.write(content)
 
 def get_session(sess):
-  session = mon_sess
+  session = sess
   while type(session).__name__ != 'Session':
     session = session._sess
   return session
