@@ -60,6 +60,12 @@ def write_log(content):
   with open(filename,'a') as file:
     file.write(content)
 
+def get_session(sess):
+  session = mon_sess
+  while type(session).__name__ != 'Session':
+    session = session._sess
+  return session
+
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")
@@ -106,10 +112,10 @@ def main(_):
     # or an error occurs.
     # Worker with task_index = 0 is the Master Worker.
     # checkpoint_dir=FLAGS.log_dir,
-    #write_log('Training started...\n')
+    # write_log('Training started...\n')
+    saver = tf.train.Saver()
     with tf.train.MonitoredTrainingSession(master=server.target,
                                            is_chief=(FLAGS.task_index == 0),
-                                           checkpoint_dir=FLAGS.log_dir,
                                            hooks=hooks) as mon_sess:
       i = 0
       while not mon_sess.should_stop():
@@ -124,6 +130,7 @@ def main(_):
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
+      saver.save(get_session(mon_sess), 'model.ckpt')
       # write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
