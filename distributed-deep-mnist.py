@@ -2,6 +2,7 @@ import argparse
 import sys
 import os
 import stat
+import logging
 
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
