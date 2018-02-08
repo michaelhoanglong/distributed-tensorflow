@@ -182,9 +182,9 @@ def main(_):
           #write_log(log)
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
-        if FLAGS.task_index == 0:
-          saved_model(mon_sess, model_signature, legacy_init_op)
       print('Training completed!')
+      if FLAGS.task_index == 0:
+        saved_model(mon_sess, model_signature, legacy_init_op)
       # write_log('Training completed!\n\n')
 
 if __name__ == "__main__":
