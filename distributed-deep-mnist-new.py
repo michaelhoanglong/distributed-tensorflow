@@ -215,10 +215,10 @@ def main(_):
     sv.stop()
     print("done")
   
-sys.stdout = orig_stdout
-f.close()
-#os.system("s3cmd put /home/ubuntu/output.txt s3://fyp2017/output/<worker_id>/output.txt")   
-os.system("cat " + FLAGS.log_dir + "/output.txt")
+  sys.stdout = orig_stdout
+  f.close()
+  #os.system("s3cmd put /home/ubuntu/output.txt s3://fyp2017/output/<worker_id>/output.txt")   
+  os.system("cat " + FLAGS.log_dir + "/output.txt")
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
