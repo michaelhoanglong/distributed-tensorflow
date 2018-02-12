@@ -152,8 +152,8 @@ def main(_):
       accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
       # Create summary for cost and accuracy
-      tf.scalar_summary("cost",cross_entropy)
-      tf.scalar_summary("accuracy", accuracy)
+      tf.summary.scalar("cost",cross_entropy)
+      tf.summary.scalar("accuracy", accuracy)
 
       # Merge all summaries into a single "operation" to be executed in one session
       summary_op = tf.merge_all_summaries()
