@@ -120,7 +120,7 @@ def main(_):
   training_epochs = 20
   #print to output file
   orig_stdout = sys.stdout
-  f = open(FLAGS.log_dir + '/output.txt' , 'w')
+  f = open(FLAGS.log_dir + '/output.txt' , 'w+')
   sys.stdout = f
 
   if FLAGS.job_name == "ps":
