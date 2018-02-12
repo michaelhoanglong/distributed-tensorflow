@@ -14,6 +14,11 @@ from tensorflow.python.util import compat
 
 FLAGS = None
 
+#print to output file
+orig_stdout = sys.stdout
+f = open(FLAGS.log_dir + '/output.txt' , 'w')
+sys.stdout = f
+
 def deepnn(x):
   x_image = tf.reshape(x, [-1, 28, 28, 1])
 
@@ -212,7 +217,9 @@ def main(_):
     print("done")
   
 sys.stdout = orig_stdout
-
+f.close()
+#os.system("s3cmd put /home/ubuntu/output.txt s3://fyp2017/output/<worker_id>/output.txt")   
+os.system("cat " + FLAGS.log_dir + "/output.txt")
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
