@@ -14,11 +14,6 @@ from tensorflow.python.util import compat
 
 FLAGS = None
 
-#print to output file
-orig_stdout = sys.stdout
-f = open(FLAGS.log_dir + '/output.txt' , 'w')
-sys.stdout = f
-
 def deepnn(x):
   x_image = tf.reshape(x, [-1, 28, 28, 1])
 
@@ -123,6 +118,10 @@ def main(_):
   batch_size = 100
   learning_rate = 0.001
   training_epochs = 20
+  #print to output file
+  orig_stdout = sys.stdout
+  f = open(FLAGS.log_dir + '/output.txt' , 'w')
+  sys.stdout = f
 
   if FLAGS.job_name == "ps":
     server.join()
