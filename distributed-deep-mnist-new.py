@@ -156,7 +156,7 @@ def main(_):
       tf.summary.scalar("accuracy", accuracy)
 
       # Merge all summaries into a single "operation" to be executed in one session
-      summary_op = tf.merge_all_summaries()
+      summary_op = tf.summary.merge_all()
       init_op = tf.initialize_all_variables()
       saver = tf.train.Saver()
       print("Variables initialized...")
