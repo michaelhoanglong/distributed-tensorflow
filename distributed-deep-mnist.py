@@ -74,7 +74,7 @@ def saved_model(sess, model_signature, legacy_init_op):
   export_path = os.path.join(
       compat.as_bytes(export_path_base),
       # TODO: change this to model version later 
-      compat.as_bytes(str(1)))
+      compat.as_bytes('version_1'))
 
   try:
     builder = saved_model_builder.SavedModelBuilder(export_path)
