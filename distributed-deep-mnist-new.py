@@ -156,13 +156,13 @@ def main(_):
 
       # Merge all summaries into a single "operation" to be executed in one session
       summary_op = tf.summary.merge_all()
-      init_op = tf.initialize_all_variables()
+      #init_op = tf.initialize_all_variables()
       saver = tf.train.Saver()
       print("Variables initialized...")
 
     sv = tf.train.Supervisor(is_chief=(FLAGS.task_index == 0),
-                            global_step=global_step,
-                            init_op=init_op)
+                            global_step=global_step)
+                            #init_op=init_op)
 
     begin_time = time.time()
     frequency = 100
