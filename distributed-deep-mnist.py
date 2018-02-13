@@ -66,11 +66,11 @@ def get_session(sess):
   return session
 
 def saved_model(sess, model_signature, legacy_init_op):
-  print("Export the saved model to {}".format(FLAGS.log_dir))
+  print("Export the saved model to {}".format(FLAGS.model_dir))
 
   sess.graph._unsafe_unfinalize()
 
-  export_path_base = FLAGS.log_dir
+  export_path_base = FLAGS.model_dir
   export_path = os.path.join(
       compat.as_bytes(export_path_base),
       # TODO: change this to model version later 
@@ -221,9 +221,14 @@ if __name__ == "__main__":
       default="/tmp/mnist_data",
       help="Directory for storing input data")
   parser.add_argument(
+      "--model_dir",
+      type=str,
+      default="/home/ubuntu/s3-drive/model_dir",
+     help="Directory for output model (must be a shared Directory)")
+  parser.add_argument(
       "--log_dir",
       type=str,
-      default="/home/ubuntu/s3-drive/log_dir",
-     help="Directory for train logs")
+      default="/home/ubuntu/log_dir",
+     help="Directory for output log")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
