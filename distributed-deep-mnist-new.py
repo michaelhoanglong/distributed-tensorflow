@@ -73,36 +73,6 @@ def get_session(sess):
     session = session._sess
   return session
 
-def saved_model(sess, model_signature, legacy_init_op):
-  logging.info("Export the saved model to {}".format(FLAGS.log_dir))
-
-  sess.graph._unsafe_unfinalize()
-
-  export_path_base = FLAGS.log_dir
-  export_path = os.path.join(
-      compat.as_bytes(export_path_base),
-      # TODO: change this to model version later 
-      compat.as_bytes(str(1)))
-
-  try:
-    builder = saved_model_builder.SavedModelBuilder(export_path)
-    builder.add_meta_graph_and_variables(
-        sess,
-        [tag_constants.SERVING],
-        clear_devices=True,
-        signature_def_map={
-            signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-            model_signature,
-        },
-        #legacy_init_op=legacy_init_op)
-        legacy_init_op=legacy_init_op)
-
-    sess.graph.finalize()
-
-    builder.save()
-  except Exception as e:
-    logging.error("Fail to export saved model, exception: {}".format(e))
-
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")

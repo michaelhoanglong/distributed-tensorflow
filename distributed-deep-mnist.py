@@ -105,6 +105,10 @@ def saved_model(sess, model_signature, legacy_init_op):
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")
+  #print to output file
+  orig_stdout = sys.stdout
+  f = open(FLAGS.log_dir + '/output.txt' , 'w+')
+  sys.stdout = f
 
   # Create a cluster from the parameter server and worker hosts.
   cluster = tf.train.ClusterSpec({"ps": ps_hosts, "worker": worker_hosts})
@@ -186,6 +190,9 @@ def main(_):
       if FLAGS.task_index == 0:
         saved_model(get_session(mon_sess), model_signature, legacy_init_op)
       # write_log('Training completed!\n\n')
+    sys.stdout = orig_stdout
+    f.close()
+    os.system("cat " + FLAGS.log_dir + "/output.txt")
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
