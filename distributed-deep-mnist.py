@@ -107,7 +107,7 @@ def main(_):
   worker_hosts = FLAGS.worker_hosts.split(",")
   #print to output file
   orig_stdout = sys.stdout
-  os.makedirs(os.path.dirname(FLAGS.log_dir), exist_ok=True)
+  os.makedirs(FLAGS.log_dir, exist_ok=True)
   f = open(FLAGS.log_dir + '/output.txt' , 'w+')
   sys.stdout = f
 
