@@ -66,7 +66,7 @@ def get_session(sess):
   return session
 
 def saved_model(sess, model_signature, legacy_init_op):
-  logging.info("Export the saved model to {}".format(FLAGS.log_dir))
+  print("Export the saved model to {}".format(FLAGS.log_dir))
 
   sess.graph._unsafe_unfinalize()
 
@@ -93,7 +93,7 @@ def saved_model(sess, model_signature, legacy_init_op):
 
     builder.save()
   except Exception as e:
-    logging.error("Fail to export saved model, exception: {}".format(e))
+    print("Fail to export saved model, exception: {}".format(e))
 
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
