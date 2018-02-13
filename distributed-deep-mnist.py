@@ -105,11 +105,6 @@ def saved_model(sess, model_signature, legacy_init_op):
 def main(_):
   ps_hosts = FLAGS.ps_hosts.split(",")
   worker_hosts = FLAGS.worker_hosts.split(",")
-  #print to output file
-  orig_stdout = sys.stdout
-  os.makedirs(FLAGS.log_dir, exist_ok=True)
-  f = open(FLAGS.log_dir + '/output.txt' , 'w+')
-  sys.stdout = f
 
   # Create a cluster from the parameter server and worker hosts.
   cluster = tf.train.ClusterSpec({"ps": ps_hosts, "worker": worker_hosts})
@@ -122,6 +117,11 @@ def main(_):
   if FLAGS.job_name == "ps":
     server.join()
   elif FLAGS.job_name == "worker":
+    #print to output file
+    orig_stdout = sys.stdout
+    os.makedirs(FLAGS.log_dir, exist_ok=True)
+    f = open(FLAGS.log_dir + '/output.txt' , 'w+')
+    sys.stdout = f
 
     # Assigns ops to the local worker by default.
     with tf.device(tf.train.replica_device_setter(
@@ -233,7 +233,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--log_dir",
       type=str,
-      default="/home/ubuntu/log_dir",
+      default="/home/ubuntu/s3-drive/log_dir",
      help="Directory for train logs")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
