@@ -61,7 +61,7 @@ def bias_variable(shape):
 
 def write_log(content):
   filename = FLAGS.log_dir + '/' + 'training_logs_task_' + str(FLAGS.task_index) + '.txt'
-  os.makedirs(os.path.dirname(FLAGS.log_dir), exist_ok=True)
+  os.makedirs(FLAGS.log_dir, exist_ok=True)
   os.chmod(FLAGS.log_dir, stat.S_IRWXO | stat.S_IRWXG | stat.S_IRWXU)
   with open(filename,'a') as file:
     file.write(content)
