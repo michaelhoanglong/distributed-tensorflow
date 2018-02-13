@@ -175,7 +175,6 @@ def main(_):
           train_accuracy = mon_sess.run(accuracy, feed_dict={
               x: batch[0], y_: batch[1], keep_prob: 1.0})
           print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          log = 'Global_step %s, task:%d_step %d, training accuracy %g.\n' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy)
         mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
         i = i + 1
       print('Training completed!')
