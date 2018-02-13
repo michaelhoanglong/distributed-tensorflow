@@ -112,7 +112,7 @@ def main(_):
   elif FLAGS.job_name == "worker":
     #print to output file
     orig_stdout = sys.stdout
-    os.makedirs(FLAGS.log_dir, exist_ok=True)
+    #os.makedirs(FLAGS.log_dir, exist_ok=True)
     f = open(FLAGS.log_dir + '/output.txt' , 'w+')
     sys.stdout = f
 
@@ -228,7 +228,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--log_dir",
       type=str,
-      default="/home/ubuntu/log_dir",
+      default="/home/ubuntu",
      help="Directory for output log")
   FLAGS, unparsed = parser.parse_known_args()
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
