@@ -127,6 +127,8 @@ def main(_):
       # Build Deep MNIST model...
       keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
       keys = tf.identity(keys_placeholder)
+
+      # TODO: Change this 3 lines for new model implementation
       x = tf.placeholder(tf.float32, [None, 784])
       y_ = tf.placeholder(tf.float32, [None, 10])
       y_conv, keep_prob = deepnn(x)
