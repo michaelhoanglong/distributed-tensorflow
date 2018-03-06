@@ -3,6 +3,7 @@ import sys
 import os
 import stat
 import logging
+import zipfile
 
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
@@ -64,6 +65,17 @@ def get_session(sess):
   while type(session).__name__ != 'Session':
     session = session._sess
   return session
+
+def zip(src, dstZipFile):
+    zf = zipfile.ZipFile(dstZipFile, "w", zipfile.ZIP_DEFLATED)
+    abs_src = os.path.abspath(src)
+    for dirname, subdirs, files in os.walk(src):
+        for filename in files:
+            absname = os.path.abspath(os.path.join(dirname, filename))
+            arcname = absname[len(abs_src) + 1:]
+            print ('zipping %s as %s' % (os.path.join(dirname, filename),arcname))
+            zf.write(absname, arcname)
+    zf.close()
 
 def saved_model(sess, model_signature, legacy_init_op):
   print("Export the saved model to {}".format(FLAGS.model_dir))
@@ -185,6 +197,8 @@ def main(_):
     sys.stdout = orig_stdout
     f.close()
     os.system("cat " + FLAGS.log_dir + "/output.txt")
+    zipFileName = FLAGS.model_dir + FLAGS.zip_name
+    zip(FLAGS.model_dir,zipFileName)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
@@ -226,6 +240,10 @@ if __name__ == "__main__":
       type=str,
       default="/home/ubuntu/s3-drive/model_dir",
      help="Directory for output model (must be a shared Directory)")
+  parser.add_argument(
+      "--zip_name",
+      type=str,
+      default="model.zip")
   parser.add_argument(
       "--log_dir",
       type=str,
