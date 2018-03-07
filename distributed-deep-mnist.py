@@ -197,8 +197,9 @@ def main(_):
     sys.stdout = orig_stdout
     f.close()
     os.system("cat " + FLAGS.log_dir + "/output.txt")
-    zipFileName = FLAGS.model_dir + FLAGS.zip_name
-    zip(FLAGS.model_dir,zipFileName)
+    if(FLAGS.task_index == 0):
+      zipFileName = FLAGS.model_dir + FLAGS.zip_name
+      zip(FLAGS.model_dir,zipFileName)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
