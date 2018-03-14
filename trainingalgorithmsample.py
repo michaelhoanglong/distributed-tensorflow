@@ -1,11 +1,11 @@
 import tensorflow as tf
 
 def getDataTensorPlaceHolder():
-  dataTensor = tf.placeholder(tf.float32, [None, 784])
+  dataTensorPlaceHolder = tf.placeholder(tf.float32, [None, 784])
   return dataTensorPlaceHolder
 
 def getLabelTensorPlaceHolder():
-  labelTensor = tf.placeholder(tf.float32, [None, 10])
+  labelTensorPlaceHolder = tf.placeholder(tf.float32, [None, 10])
   return labelTensorPlaceHolder
 
 def trainingAlgorithm(x):
