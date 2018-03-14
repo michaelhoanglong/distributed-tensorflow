@@ -97,9 +97,9 @@ def main(_):
       keys = tf.identity(keys_placeholder)
 
       # TODO: Change this 3 lines for new model implementation
-      x = tf.placeholder(tf.float32, [None, 784])
-      y_ = tf.placeholder(tf.float32, [None, 10])
-      y_conv, keep_prob = trainingalgorithm.deepnn(x)
+      x = trainingalgorithm.getDataTensorPlaceHolder()
+      y_ = trainingalgorithm.getLabelTensorPlaceHolder()
+      y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
 
       cross_entropy = tf.reduce_mean(
           tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
