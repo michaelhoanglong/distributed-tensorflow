@@ -33,7 +33,7 @@ def zip(src, dstZipFile):
             zf.write(absname, arcname)
     zf.close()
 
-def saved_model(sess, model_signature, legacy_init_op):
+def saved_model(sess, prediction_signature, legacy_init_op, x, y_):
   print("Export the saved model to {}".format(FLAGS.model_dir))
 
   sess.graph._unsafe_unfinalize()
@@ -46,17 +46,16 @@ def saved_model(sess, model_signature, legacy_init_op):
 
   try:
     builder = saved_model_builder.SavedModelBuilder(export_path)
+
     builder.add_meta_graph_and_variables(
         sess,
         [tag_constants.SERVING],
         clear_devices=True,
         signature_def_map={
             # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-            # model_signature,
+            # prediction_signature,
             'predict_images':
-               prediction_signature,
-            signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-               classification_signature,
+              prediction_signature,
         },
         #legacy_init_op=legacy_init_op)
         legacy_init_op=legacy_init_op)
@@ -114,7 +113,7 @@ def main(_):
       correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
       accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-      model_signature = signature_def_utils.build_signature_def(
+      prediction_signature = signature_def_utils.build_signature_def(
             inputs={
                 "keys": utils.build_tensor_info(keys_placeholder),
                 "features": utils.build_tensor_info(x)
@@ -153,7 +152,7 @@ def main(_):
         i = i + 1
       print('Training completed!')
       if FLAGS.task_index == 0:
-        saved_model(get_session(mon_sess), model_signature, legacy_init_op)
+        saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     sys.stdout = orig_stdout
     f.close()
     os.system("cat " + FLAGS.log_dir + "/output.txt")
