@@ -33,7 +33,7 @@ def zip(src, dstZipFile):
             zf.write(absname, arcname)
     zf.close()
 
-def saved_model(sess, prediction_signature, legacy_init_op, x, y_):
+def saved_model(sess, prediction_signature, legacy_init_op):
   print("Export the saved model to {}".format(FLAGS.model_dir))
 
   sess.graph._unsafe_unfinalize()
