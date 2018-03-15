@@ -1,5 +1,6 @@
 import argparse
 import sys
+import traceback
 import os
 import stat
 import logging
@@ -87,74 +88,79 @@ def main(_):
     f = open(FLAGS.log_dir + '/output.txt' , 'w+')
     sys.stdout = f
 
-    # Assigns ops to the local worker by default.
-    with tf.device(tf.train.replica_device_setter(
-        worker_device="/job:worker/task:%d" % FLAGS.task_index,
-        cluster=cluster)):
+    try:
+      # Assigns ops to the local worker by default.
+      with tf.device(tf.train.replica_device_setter(
+          worker_device="/job:worker/task:%d" % FLAGS.task_index,
+          cluster=cluster)):
 
-      # Import data
-      dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+        # Import data
+        dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
-      # Build Deep MNIST model...
-      keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
-      keys = tf.identity(keys_placeholder)
+        # Build Deep MNIST model...
+        keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
+        keys = tf.identity(keys_placeholder)
 
-      # TODO: Change this 3 lines for new model implementation
-      x = trainingalgorithm.getDataTensorPlaceHolder()
-      y_ = trainingalgorithm.getLabelTensorPlaceHolder()
-      y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
+        # TODO: Change this 3 lines for new model implementation
+        x = trainingalgorithm.getDataTensorPlaceHolder()
+        y_ = trainingalgorithm.getLabelTensorPlaceHolder()
+        y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
 
-      cross_entropy = tf.reduce_mean(
-          tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
+        cross_entropy = tf.reduce_mean(
+            tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
 
-      global_step = tf.contrib.framework.get_or_create_global_step()
+        global_step = tf.contrib.framework.get_or_create_global_step()
 
-      train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step)
-      correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
-      accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy, global_step=global_step)
+        correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-      prediction_signature = signature_def_utils.build_signature_def(
-            inputs={
-                "keys": utils.build_tensor_info(keys_placeholder),
-                "features": utils.build_tensor_info(x)
-            },
-            outputs={
-                "keys": utils.build_tensor_info(keys),
-                "prediction": utils.build_tensor_info(correct_prediction)
-            },
-            method_name=signature_constants.PREDICT_METHOD_NAME)
+        prediction_signature = signature_def_utils.build_signature_def(
+              inputs={
+                  "keys": utils.build_tensor_info(keys_placeholder),
+                  "features": utils.build_tensor_info(x)
+              },
+              outputs={
+                  "keys": utils.build_tensor_info(keys),
+                  "prediction": utils.build_tensor_info(correct_prediction)
+              },
+              method_name=signature_constants.PREDICT_METHOD_NAME)
 
-      legacy_init_op = tf.group(
-          tf.initialize_all_tables(), name="legacy_init_op")
+        legacy_init_op = tf.group(
+            tf.initialize_all_tables(), name="legacy_init_op")
 
-    # The StopAtStepHook handles stopping after running given steps.
-    hooks=[tf.train.StopAtStepHook(last_step=1000)]
+      # The StopAtStepHook handles stopping after running given steps.
+      hooks=[tf.train.StopAtStepHook(last_step=1000)]
 
-    # The MonitoredTrainingSession takes care of session initialization,
-    # restoring from a checkpoint, saving to a checkpoint, and closing when done
-    # or an error occurs.
-    # Worker with task_index = 0 is the Master Worker.
-    # checkpoint_dir=FLAGS.log_dir,
-    saver = tf.train.Saver()
+      # The MonitoredTrainingSession takes care of session initialization,
+      # restoring from a checkpoint, saving to a checkpoint, and closing when done
+      # or an error occurs.
+      # Worker with task_index = 0 is the Master Worker.
+      # checkpoint_dir=FLAGS.log_dir,
+      saver = tf.train.Saver()
 
-    with tf.train.MonitoredTrainingSession(master=server.target,
-                                           is_chief=(FLAGS.task_index == 0),
-                                           hooks=hooks) as mon_sess:
-      i = 0
-      while not mon_sess.should_stop():
-        # Run a training step asynchronously.
-        batch = dataset.train.next_batch(50)
-        if i % 100 == 0:
-          train_accuracy = mon_sess.run(accuracy, feed_dict={
-              x: batch[0], y_: batch[1], keep_prob: 1.0})
-          print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-        mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-        i = i + 1
-      print('Training completed!')
-      if FLAGS.task_index == 0:
-        saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
-    sys.stdout = orig_stdout
-    f.close()
+      with tf.train.MonitoredTrainingSession(master=server.target,
+                                             is_chief=(FLAGS.task_index == 0),
+                                             hooks=hooks) as mon_sess:
+        i = 0
+        while not mon_sess.should_stop():
+          # Run a training step asynchronously.
+          batch = dataset.train.next_batch(50)
+          if i % 100 == 0:
+            train_accuracy = mon_sess.run(accuracy, feed_dict={
+                x: batch[0], y_: batch[1], keep_prob: 1.0})
+            print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
+          mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+          i = i + 1
+        print('Training completed!')
+        if FLAGS.task_index == 0:
+          saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+    except Exception as e:
+      print(traceback.format_exc())
+    finally:
+      sys.stdout = orig_stdout
+      f.close()
+
     os.system("cat " + FLAGS.log_dir + "/output.txt")
     if(FLAGS.task_index == 0):
       os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
