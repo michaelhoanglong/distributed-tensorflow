@@ -42,7 +42,7 @@ def saved_model(sess, model_signature, legacy_init_op):
   export_path = os.path.join(
       compat.as_bytes(export_path_base),
       # TODO: change this to model version later 
-      compat.as_bytes('version_1'))
+      compat.as_bytes('1'))
 
   try:
     builder = saved_model_builder.SavedModelBuilder(export_path)
@@ -51,8 +51,12 @@ def saved_model(sess, model_signature, legacy_init_op):
         [tag_constants.SERVING],
         clear_devices=True,
         signature_def_map={
+            # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+            # model_signature,
+            'predict_images':
+               prediction_signature,
             signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-            model_signature,
+               classification_signature,
         },
         #legacy_init_op=legacy_init_op)
         legacy_init_op=legacy_init_op)
