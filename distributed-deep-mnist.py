@@ -115,16 +115,25 @@ def main(_):
         correct_prediction = tf.equal(tf.argmax(y_conv, 1), tf.argmax(y_, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-        prediction_signature = signature_def_utils.build_signature_def(
-              inputs={
-                  "keys": utils.build_tensor_info(keys_placeholder),
-                  "features": utils.build_tensor_info(x)
-              },
-              outputs={
-                  "keys": utils.build_tensor_info(keys),
-                  "prediction": utils.build_tensor_info(correct_prediction)
-              },
-              method_name=signature_constants.PREDICT_METHOD_NAME)
+        # prediction_signature = signature_def_utils.build_signature_def(
+        #       inputs={
+        #           "keys": utils.build_tensor_info(keys_placeholder),
+        #           "features": utils.build_tensor_info(x)
+        #       },
+        #       outputs={
+        #           "keys": utils.build_tensor_info(keys),
+        #           "prediction": utils.build_tensor_info(correct_prediction)
+        #       },
+        #       method_name=signature_constants.PREDICT_METHOD_NAME)
+        
+        tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
+        tensor_info_y = tf.saved_model.utils.build_tensor_info(y)
+
+        prediction_signature = (
+            tf.saved_model.signature_def_utils.build_signature_def(
+                inputs={'images': tensor_info_x},
+                outputs={'scores': tensor_info_y},
+                method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
         legacy_init_op = tf.group(
             tf.initialize_all_tables(), name="legacy_init_op")
