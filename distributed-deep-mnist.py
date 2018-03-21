@@ -128,7 +128,7 @@ def main(_):
         #       method_name=signature_constants.PREDICT_METHOD_NAME)
 
         tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
-        tensor_info_y = tf.saved_model.utils.build_tensor_info(y)
+        tensor_info_y = tf.saved_model.utils.build_tensor_info(y_conv)
 
         prediction_signature = (
             tf.saved_model.signature_def_utils.build_signature_def(
