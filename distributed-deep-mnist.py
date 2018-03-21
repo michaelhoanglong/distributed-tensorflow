@@ -2,6 +2,7 @@ import argparse
 import sys
 import traceback
 import os
+import errno
 import stat
 import logging
 import zipfile
@@ -125,7 +126,7 @@ def main(_):
         #           "prediction": utils.build_tensor_info(correct_prediction)
         #       },
         #       method_name=signature_constants.PREDICT_METHOD_NAME)
-        
+
         tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
         tensor_info_y = tf.saved_model.utils.build_tensor_info(y)
 
@@ -172,6 +173,11 @@ def main(_):
 
     os.system("cat " + FLAGS.log_dir + "/output.txt")
     if(FLAGS.task_index == 0):
+      try:
+        os.makedirs(FLAGS.model_dir)
+      except OSError as e:
+        if e.errno != errno.EEXIST:
+          raise
       os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
       os.system("cp " + FLAGS.log_dir + "/output.txt" + " " + FLAGS.model_dir)
       zipFileName = FLAGS.model_dir + FLAGS.zip_name
