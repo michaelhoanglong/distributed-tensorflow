@@ -164,8 +164,8 @@ def main(_):
           mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           i = i + 1
         print('Training completed!')
-        if FLAGS.task_index == 0:
-          #saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+        # if FLAGS.task_index == 0:
+        #   saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
     finally:
