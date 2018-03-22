@@ -41,30 +41,49 @@ def saved_model(sess, prediction_signature, legacy_init_op):
   sess.graph._unsafe_unfinalize()
 
   export_path_base = FLAGS.model_dir
+  # export_path = os.path.join(
+  #     compat.as_bytes(export_path_base),
+  #     # TODO: change this to model version later 
+  #     compat.as_bytes('1'))
   export_path = os.path.join(
-      compat.as_bytes(export_path_base),
-      # TODO: change this to model version later 
-      compat.as_bytes('1'))
+    tf.compat.as_bytes(export_path_base),
+    tf.compat.as_bytes('1'))
+  print('Exporting trained model to', export_path)
 
   try:
-    builder = saved_model_builder.SavedModelBuilder(export_path)
+    # builder = saved_model_builder.SavedModelBuilder(export_path)
+    builder = tf.saved_model.builder.SavedModelBuilder(export_path)
+
+
+    # builder.add_meta_graph_and_variables(
+    #     sess,
+    #     [tag_constants.SERVING],
+    #     clear_devices=True,
+    #     signature_def_map={
+    #         # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+    #         # prediction_signature,
+    #         'predict_images':
+    #           prediction_signature,
+    #     },
+    #     #legacy_init_op=legacy_init_op)
+    #     legacy_init_op=legacy_init_op)
 
     builder.add_meta_graph_and_variables(
-        sess,
-        [tag_constants.SERVING],
-        clear_devices=True,
-        signature_def_map={
-            # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-            # prediction_signature,
-            'predict_images':
+      sess, [tf.saved_model.tag_constants.SERVING],
+      signature_def_map={
+          'predict_images':
               prediction_signature,
-        },
-        #legacy_init_op=legacy_init_op)
-        legacy_init_op=legacy_init_op)
-
-    sess.graph.finalize()
+          tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+              classification_signature,
+      },
+      legacy_init_op=legacy_init_op)
 
     builder.save()
+    print('Done exporting!')
+
+    # sess.graph.finalize()
+
+    # builder.save()
   except Exception as e:
     print("Fail to export saved model, exception: {}".format(e))
 
@@ -136,8 +155,10 @@ def main(_):
                 outputs={'scores': tensor_info_y},
                 method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
-        legacy_init_op = tf.group(
-            tf.initialize_all_tables(), name="legacy_init_op")
+        # legacy_init_op = tf.group(
+        #     tf.initialize_all_tables(), name="legacy_init_op")
+        legacy_init_op = tf.group(tf.tables_initializer(), name='legacy_init_op')
+
 
       # The StopAtStepHook handles stopping after running given steps.
       hooks=[tf.train.StopAtStepHook(last_step=1000)]
@@ -151,7 +172,6 @@ def main(_):
 
       with tf.train.MonitoredTrainingSession(master=server.target,
                                              is_chief=(FLAGS.task_index == 0),
-                                             checkpoint_dir=FLAGS.model_dir,
                                              hooks=hooks) as mon_sess:
         i = 0
         while not mon_sess.should_stop():
@@ -164,8 +184,8 @@ def main(_):
           mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           i = i + 1
         print('Training completed!')
-        # if FLAGS.task_index == 0:
-        #   saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+        if FLAGS.task_index == 0:
+          saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
     finally:
