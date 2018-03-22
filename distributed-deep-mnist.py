@@ -73,8 +73,6 @@ def saved_model(sess, prediction_signature, legacy_init_op):
       signature_def_map={
           'predict_images':
               prediction_signature,
-          tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-              classification_signature,
       },
       legacy_init_op=legacy_init_op)
 
