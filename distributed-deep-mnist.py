@@ -151,6 +151,7 @@ def main(_):
 
       with tf.train.MonitoredTrainingSession(master=server.target,
                                              is_chief=(FLAGS.task_index == 0),
+                                             checkpoint_dir=FLAGS.model_dir,
                                              hooks=hooks) as mon_sess:
         i = 0
         while not mon_sess.should_stop():
@@ -164,7 +165,7 @@ def main(_):
           i = i + 1
         print('Training completed!')
         if FLAGS.task_index == 0:
-          saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+          #saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
     finally:
