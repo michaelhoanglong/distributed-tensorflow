@@ -76,6 +76,8 @@ def saved_model(sess, prediction_signature, legacy_init_op):
       },
       legacy_init_op=legacy_init_op)
 
+    sess.graph.finalize()
+
     builder.save()
     print('Done exporting!')
 
