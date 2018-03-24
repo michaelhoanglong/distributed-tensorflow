@@ -155,9 +155,9 @@ def main(_):
                 outputs={'scores': tensor_info_y},
                 method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
-        # legacy_init_op = tf.group(
-        #     tf.initialize_all_tables(), name="legacy_init_op")
-        legacy_init_op = tf.group(tf.tables_initializer(), name='legacy_init_op')
+        legacy_init_op = tf.group(
+            tf.initialize_all_tables(), name="legacy_init_op")
+        # legacy_init_op = tf.group(tf.tables_initializer(), name='legacy_init_op')
 
 
       # The StopAtStepHook handles stopping after running given steps.
