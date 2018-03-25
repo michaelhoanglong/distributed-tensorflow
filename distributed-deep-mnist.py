@@ -41,40 +41,40 @@ def saved_model(sess, prediction_signature, legacy_init_op):
   sess.graph._unsafe_unfinalize()
 
   export_path_base = FLAGS.model_dir
-  # export_path = os.path.join(
-  #     compat.as_bytes(export_path_base),
-  #     # TODO: change this to model version later 
-  #     compat.as_bytes('1'))
   export_path = os.path.join(
-    tf.compat.as_bytes(export_path_base),
-    tf.compat.as_bytes('1'))
+      compat.as_bytes(export_path_base),
+      # TODO: change this to model version later 
+      compat.as_bytes('1'))
+  # export_path = os.path.join(
+  #   tf.compat.as_bytes(export_path_base),
+  #   tf.compat.as_bytes('1'))
   print('Exporting trained model to', export_path)
 
   try:
-    # builder = saved_model_builder.SavedModelBuilder(export_path)
-    builder = tf.saved_model.builder.SavedModelBuilder(export_path)
+    builder = saved_model_builder.SavedModelBuilder(export_path)
+    # builder = tf.saved_model.builder.SavedModelBuilder(export_path)
 
-
-    # builder.add_meta_graph_and_variables(
-    #     sess,
-    #     [tag_constants.SERVING],
-    #     clear_devices=True,
-    #     signature_def_map={
-    #         # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-    #         # prediction_signature,
-    #         'predict_images':
-    #           prediction_signature,
-    #     },
-    #     #legacy_init_op=legacy_init_op)
-    #     legacy_init_op=legacy_init_op)
 
     builder.add_meta_graph_and_variables(
-      sess, [tf.saved_model.tag_constants.SERVING],
-      signature_def_map={
-          'predict_images':
+        sess,
+        [tag_constants.SERVING],
+        clear_devices=True,
+        signature_def_map={
+            # signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
+            # prediction_signature,
+            'predict_images':
               prediction_signature,
-      },
-      legacy_init_op=legacy_init_op)
+        },
+        #legacy_init_op=legacy_init_op)
+        legacy_init_op=legacy_init_op)
+
+    # builder.add_meta_graph_and_variables(
+    #   sess, [tf.saved_model.tag_constants.SERVING],
+    #   signature_def_map={
+    #       'predict_images':
+    #           prediction_signature,
+    #   },
+    #   legacy_init_op=legacy_init_op)
 
     sess.graph.finalize()
 
