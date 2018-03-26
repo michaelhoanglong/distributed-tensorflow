@@ -128,9 +128,10 @@ def main(_):
         tf_example = tf.parse_example(serialized_tf_example, feature_configs)
         x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
         y_ = trainingalgorithm.getLabelTensorPlaceHolder()
+        #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         y_conv = tf.identity(y_conv, name='y_conv')
-        keep_prob = tf.identity(keep_prob, name='keep_prob')
+        #keep_prob = tf.identity(keep_prob, name='keep_prob')
 
 
         cross_entropy = tf.reduce_mean(
@@ -186,10 +187,13 @@ def main(_):
           # Run a training step asynchronously.
           batch = dataset.train.next_batch(50)
           if i % 100 == 0:
+            # train_accuracy = mon_sess.run(accuracy, feed_dict={
+            #     x: batch[0], y_: batch[1], keep_prob: 0.9})
             train_accuracy = mon_sess.run(accuracy, feed_dict={
-                x: batch[0], y_: batch[1], keep_prob: 0.9})
+                x: batch[0], y_: batch[1]})
             print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+          #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+          mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
           i = i + 1
         print('Training completed!')
         if FLAGS.task_index == 0:
