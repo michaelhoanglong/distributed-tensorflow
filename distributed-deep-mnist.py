@@ -130,6 +130,7 @@ def main(_):
         y_ = trainingalgorithm.getLabelTensorPlaceHolder()
         y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         y_conv = tf.identity(y_conv, name='y_conv')
+        keep_prob = tf.identity(keep_prob, name'keep_prob')
 
 
         cross_entropy = tf.reduce_mean(
@@ -154,10 +155,11 @@ def main(_):
 
         tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
         tensor_info_y = tf.saved_model.utils.build_tensor_info(y_conv)
+        tensor_info_keepprob = tf.saved_model.utils.build_tensor_info(keep_prob)
 
         prediction_signature = (
             tf.saved_model.signature_def_utils.build_signature_def(
-                inputs={'images': tensor_info_x},
+                inputs={'images': tensor_info_x, 'keep_prob': tensor_info_keepprob},
                 outputs={'scores': tensor_info_y},
                 method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
