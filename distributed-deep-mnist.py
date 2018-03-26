@@ -156,7 +156,7 @@ def main(_):
 
         tensor_info_x = tf.saved_model.utils.build_tensor_info(x)
         tensor_info_y = tf.saved_model.utils.build_tensor_info(y_conv)
-        tensor_info_keepprob = tf.saved_model.utils.build_tensor_info(keep_prob)
+        #tensor_info_keepprob = tf.saved_model.utils.build_tensor_info(keep_prob)
 
         prediction_signature = (
             tf.saved_model.signature_def_utils.build_signature_def(
