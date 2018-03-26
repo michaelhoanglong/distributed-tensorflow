@@ -160,7 +160,7 @@ def main(_):
 
         prediction_signature = (
             tf.saved_model.signature_def_utils.build_signature_def(
-                inputs={'images': tensor_info_x, 'keep_prob': tensor_info_keepprob},
+                inputs={'images': tensor_info_x},
                 outputs={'scores': tensor_info_y},
                 method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
