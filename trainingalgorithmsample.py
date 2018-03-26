@@ -29,14 +29,15 @@ def trainingAlgorithm(dataTensorPlaceHolder):
   h_pool2_flat = tf.reshape(h_pool2, [-1, 7*7*64])
   h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
-  keep_prob = tf.placeholder(tf.float32)
-  h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+  #keep_prob = tf.placeholder(tf.float32)
+  h_fc1_drop = tf.nn.dropout(h_fc1, 0.7)
 
   W_fc2 = weight_variable([1024, 10])
   b_fc2 = bias_variable([10])
 
   y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
-  return y_conv, keep_prob
+  #return y_conv, keep_prob
+  return y_conv
 
 def conv2d(x, W):
   return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
