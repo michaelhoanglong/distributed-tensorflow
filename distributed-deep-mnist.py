@@ -130,7 +130,7 @@ def main(_):
         y_ = trainingalgorithm.getLabelTensorPlaceHolder()
         y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         y_conv = tf.identity(y_conv, name='y_conv')
-        keep_prob = tf.identity(keep_prob, name'keep_prob')
+        keep_prob = tf.identity(keep_prob, name='keep_prob')
 
 
         cross_entropy = tf.reduce_mean(
