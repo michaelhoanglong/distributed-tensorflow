@@ -118,8 +118,8 @@ def main(_):
         dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
         # Build Deep MNIST model...
-        keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
-        keys = tf.identity(keys_placeholder)
+        # keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
+        # keys = tf.identity(keys_placeholder)
 
         # TODO: Change this 3 lines for new model implementation
         x = trainingalgorithm.getDataTensorPlaceHolder()
