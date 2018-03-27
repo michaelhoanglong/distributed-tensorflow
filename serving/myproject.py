@@ -18,53 +18,53 @@ app = Flask(__name__)
 @app.route("/")
 def index():
 	#host, port, image = parse_args()
-	try:
-		host = "localhost"
-		port = 2000
-		channel = implementations.insecure_channel(host, int(port))
-		stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+	#try:
+	host = "localhost"
+	port = 2000
+	channel = implementations.insecure_channel(host, int(port))
+	stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
 
-		dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
-		batch = dataset.train.next_batch(1)
-		print(batch[1])
-		start = time.time()
+	dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
+	batch = dataset.train.next_batch(1)
+	print(batch[1])
+	start = time.time()
 
-		request = predict_pb2.PredictRequest()
-		
-		request.model_spec.name = 'mnist'
-	    
-		request.model_spec.signature_name = 'predict_images'
+	request = predict_pb2.PredictRequest()
 	
-		request.inputs['images'].CopyFrom(make_tensor_proto(batch[0], shape=[1, 784]))
-		
-		result = stub.Predict(request, 60.0)  # 60 secs timeout
+	request.model_spec.name = 'mnist'
+    
+	request.model_spec.signature_name = 'predict_images'
 
-	    
-		end = time.time()
-	    
-		time_diff = end - start
-
-		print(result.outputs['scores'].float_val)
-		print(result)
-	    
-		print('time elapased: {}'.format(time_diff))
-
-		result_list = result.outputs['scores'].float_val
-
-		max_val = max(result_list)
-
-		num_result = 0
-		for i in range(0,len(result_list)):
-			if(result_list[i] == max_val):
-				num_result = i
-    	
-		return str(num_result)
+	request.inputs['images'].CopyFrom(make_tensor_proto(batch[0], shape=[1, 784]))
 	
-	except Exception as e:
-		f = open('/home/ubuntu/myproject/log.txt' , 'w+')
-		f.write(str(e))
-		f.close()
-		return str(e)
+	result = stub.Predict(request, 60.0)  # 60 secs timeout
+
+    
+	end = time.time()
+    
+	time_diff = end - start
+
+	print(result.outputs['scores'].float_val)
+	print(result)
+    
+	print('time elapased: {}'.format(time_diff))
+
+	result_list = result.outputs['scores'].float_val
+
+	max_val = max(result_list)
+
+	num_result = 0
+	for i in range(0,len(result_list)):
+		if(result_list[i] == max_val):
+			num_result = i
+	
+	return str(num_result)
+	
+	# except Exception as e:
+	# 	f = open('/home/ubuntu/myproject/log.txt' , 'w+')
+	# 	f.write(str(e))
+	# 	f.close()
+	# 	return str(e)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
