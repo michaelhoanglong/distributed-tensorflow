@@ -44,7 +44,7 @@ def index():
 	    
 		time_diff = end - start
 
-	    print(result.outputs['scores'].float_val)
+		print(result.outputs['scores'].float_val)
 		print(result)
 	    
 		print('time elapased: {}'.format(time_diff))
