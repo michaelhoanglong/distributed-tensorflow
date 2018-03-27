@@ -18,33 +18,36 @@ app = Flask(__name__)
 @app.route("/")
 def index():
 	#host, port, image = parse_args()
-	host = "localhost"
-	port = 9000
+	try:
+		host = "localhost"
+		port = 9000
 
-    channel = implementations.insecure_channel(host, int(port))
-    stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+	    channel = implementations.insecure_channel(host, int(port))
+	    stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
 
-	dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
-    batch = dataset.train.next_batch(1)
-    print(batch[1])
-    start = time.time()
+		dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
+	    batch = dataset.train.next_batch(1)
+	    print(batch[1])
+	    start = time.time()
 
-    request = predict_pb2.PredictRequest()
+	    request = predict_pb2.PredictRequest()
 
-    request.model_spec.name = 'mnist'
-    request.model_spec.signature_name = 'predict_images'
+	    request.model_spec.name = 'mnist'
+	    request.model_spec.signature_name = 'predict_images'
 
-    request.inputs['images'].CopyFrom(make_tensor_proto(batch[0], shape=[1, 784]))
+	    request.inputs['images'].CopyFrom(make_tensor_proto(batch[0], shape=[1, 784]))
 
-    result = stub.Predict(request, 60.0)  # 60 secs timeout
+	    result = stub.Predict(request, 60.0)  # 60 secs timeout
 
-    end = time.time()
-    time_diff = end - start
+	    end = time.time()
+	    time_diff = end - start
 
-    print(result)
-    print('time elapased: {}'.format(time_diff))
+	    print(result)
+	    print('time elapased: {}'.format(time_diff))
 
-    return result
+    	return result
+	except Exception as e:
+		return e
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
