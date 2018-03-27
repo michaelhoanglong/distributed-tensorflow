@@ -71,7 +71,7 @@ def main():
     request.model_spec.signature_name = 'predict_images'
 
     request.inputs['images'].CopyFrom(make_tensor_proto(batch[0], shape=[1, 784]))
-    request.inputs['keep_prob'].CopyFrom(make_tensor_proto(1, shape=[1,1]))
+    # request.inputs['keep_prob'].CopyFrom(make_tensor_proto(1, shape=[1,1]))
 
     result = stub.Predict(request, 60.0)  # 60 secs timeout
 
