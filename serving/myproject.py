@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 # Communication to TensorFlow server via gRPC
 from grpc.beta import implementations
 import tensorflow as tf
+import numpy as np
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
