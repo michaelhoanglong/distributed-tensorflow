@@ -58,7 +58,7 @@ def index():
 			if(result_list[i] == max_val):
 				num_result = i
     	
-		return num_result
+		return str(num_result)
 	
 	except Exception as e:
 		f = open('/home/ubuntu/myproject/log.txt' , 'w+')
