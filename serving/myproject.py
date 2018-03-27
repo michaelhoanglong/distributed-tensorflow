@@ -45,9 +45,12 @@ def index():
 	    print(result)
 	    print('time elapased: {}'.format(time_diff))
 
-    	return result
+    	return str(result)
 	except Exception as e:
-		return e
+		f = open('/home/ubuntu/myproject/log.txt' , 'w+')
+		f.write(str(e))
+		f.close()
+		return str(e)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
