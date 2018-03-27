@@ -20,7 +20,7 @@ def index():
 	#host, port, image = parse_args()
 	try:
 		host = "localhost"
-		port = 9000
+		port = 2000
 		channel = implementations.insecure_channel(host, int(port))
 		stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
 
