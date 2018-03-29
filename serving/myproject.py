@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 from grpc.beta import implementations
 import tensorflow as tf
 import numpy as np
+import os
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
@@ -19,50 +20,57 @@ app = Flask(__name__)
 @app.route("/")
 def index():
 	#host, port, image = parse_args()
-	#try:
-	host = "localhost"
-	port = 9000
-	channel = implementations.insecure_channel(host, int(port))
-	stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+	try:
+		host = "localhost"
+		port = 9000
+		channel = implementations.insecure_channel(host, int(port))
+		stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
 
-	# dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
-	# batch = dataset.train.next_batch(1)
-	# print(batch[1])
-	img = [[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
-	numpyarray = np.array(img, np.float32)
-	print("Expected result: %d" % (2))
-	start = time.time()
+		# dataset = input_data.read_data_sets('/tmp/Mnist', one_hot=True)
+		# batch = dataset.train.next_batch(1)
+		# print(batch[1])
+		img = [[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+		numpyarray = np.array(img, np.float32)
+		print("Expected result: %d" % (2))
+		start = time.time()
 
-	request = predict_pb2.PredictRequest()
-	
-	request.model_spec.name = 'mnist'
-    
-	request.model_spec.signature_name = 'predict_images'
+		request = predict_pb2.PredictRequest()
+		
+		request.model_spec.name = 'mnist'
+	    
+		request.model_spec.signature_name = 'predict_images'
 
-	request.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 784]))
-	
-	result = stub.Predict(request, 60.0)  # 60 secs timeout
+		request.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 784]))
+		
+		result = stub.Predict(request, 60.0)  # 60 secs timeout
 
-    
-	end = time.time()
-    
-	time_diff = end - start
+	    
+		end = time.time()
+	    
+		time_diff = end - start
 
-	print(result.outputs['scores'].float_val)
-	print(result)
-    
-	print('time elapased: {}'.format(time_diff))
+		print(result.outputs['scores'].float_val)
+		print(result)
+	    
+		print('time elapased: {}'.format(time_diff))
 
-	result_list = result.outputs['scores'].float_val
+		result_list = result.outputs['scores'].float_val
 
-	max_val = max(result_list)
+		max_val = max(result_list)
 
-	num_result = 0
-	for i in range(0,len(result_list)):
-		if(result_list[i] == max_val):
-			num_result = i
-	
-	return str(num_result)
+		num_result = 0
+		for i in range(0,len(result_list)):
+			if(result_list[i] == max_val):
+				num_result = i
+		
+		return str(num_result)
+	except Exception as e:
+		with open('/home/ubuntu/myproject/log.txt', 'w+') as f:
+			f.write(str(e))
+			f.close()
+		os.system("sudo killall -9 tensorflow_model_server")
+		os.system("tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/home/ubuntu/model")
+		index()
 	
 	# except Exception as e:
 	# 	f = open('/home/ubuntu/myproject/log.txt' , 'w+')
