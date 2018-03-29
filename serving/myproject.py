@@ -74,9 +74,9 @@ def index():
 			os.system("tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/home/ubuntu/model")
 		except Exception as e:
 			with open('/home/ubuntu/myproject/log.txt', 'a+') as f:
-			error = "\n\n Internal Server Error (os.system error) \n" + str(e)
-			f.write(error)
-			f.close()
+				error = "\n\n Internal Server Error (os.system error) \n" + str(e)
+				f.write(error)
+				f.close()
 	
 	# except Exception as e:
 	# 	f = open('/home/ubuntu/myproject/log.txt' , 'w+')
