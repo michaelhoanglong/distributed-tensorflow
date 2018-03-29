@@ -65,12 +65,12 @@ def index():
 		
 		return str(num_result)
 	except Exception as e:
-		with open('/home/ubuntu/myproject/log.txt', 'w+') as f:
-			f.write(str(e))
+		with open('/home/ubuntu/myproject/log.txt', 'a+') as f:
+			error = "\n Internal Server Error \n" + str(e)
+			f.write(error)
 			f.close()
 		os.system("sudo killall -9 tensorflow_model_server")
 		os.system("tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/home/ubuntu/model")
-		index()
 	
 	# except Exception as e:
 	# 	f = open('/home/ubuntu/myproject/log.txt' , 'w+')
