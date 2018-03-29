@@ -62,9 +62,19 @@ def main():
     end = time.time()
     time_diff = end - start
 
-    print(result.outputs['scores'].float_val)
-    print(result)
+    #print(result.outputs['scores'].float_val)
+    #print(result)
     print('time elapased: {}'.format(time_diff))
+
+    result_list = result.outputs['scores'].float_val
+
+    max_val = max(result_list)
+
+    num_result = 0
+    for i in range(0,len(result_list)):
+        if(result_list[i] == max_val):
+            num_result = i
+    print('Predicted Number: {}'.format(num_result))
 
 
 if __name__ == '__main__':
