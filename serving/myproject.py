@@ -7,7 +7,6 @@ from grpc.beta import implementations
 import tensorflow as tf
 import numpy as np
 import os
-import thread
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
@@ -70,22 +69,6 @@ def index():
 			error = "\n\n Internal Server Error \n" + str(e)
 			f.write(error)
 			f.close()
-		thread.start_new_thread(modelServingThread,())
-
-def modelServingThread():
-	try:
-		os.system("sudo killall -9 tensorflow_model_server")
-		os.system("tensorflow_model_server --port=9000 --model_name=mnist --model_base_path=/home/ubuntu/model")
-	except Exception as e:
-		with open('/home/ubuntu/myproject/log.txt', 'a+') as f:
-			error = "\n\n Internal Server Error (os.system error) \n" + str(e)
-			f.write(error)
-			f.close()
-	# except Exception as e:
-	# 	f = open('/home/ubuntu/myproject/log.txt' , 'w+')
-	# 	f.write(str(e))
-	# 	f.close()
-	# 	return str(e)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
