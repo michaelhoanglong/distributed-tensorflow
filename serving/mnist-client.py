@@ -48,7 +48,7 @@ def main():
 
     #numpyarray = imgtopx.imageprepare(image)
     #numpyarray = np.array(img, np.float32)
-    numpyarray = cv2.imread(image).flattern
+    numpyarray = cv2.imread(image).flatten()
     start = time.time()
 
     request = predict_pb2.PredictRequest()
