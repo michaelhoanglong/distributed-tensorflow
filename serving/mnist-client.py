@@ -63,7 +63,7 @@ def main():
     time_diff = end - start
 
     #print(result.outputs['scores'].float_val)
-    #print(result)
+    print(result)
     print('time elapased: {}'.format(time_diff))
 
     result_list = result.outputs['scores'].float_val
