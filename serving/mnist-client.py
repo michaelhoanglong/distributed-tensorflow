@@ -49,9 +49,9 @@ def main():
     #numpyarray = imgtopx.imageprepare(image)
     img = cv2.imread(image)
     imgarray = []
-    for i in range(0, len(im)):
-        for j in range(0, len(im[i])):
-            tmp = im[i][j]
+    for i in range(0, len(img)):
+        for j in range(0, len(img[i])):
+            tmp = img[i][j]
             px = 0
             for item in tmp:
                 if(item != 0):
