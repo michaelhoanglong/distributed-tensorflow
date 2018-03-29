@@ -8,6 +8,7 @@ sudo pip install Pillow
 Or look at the Pillow documentation for other installation options.
 """
 from PIL import Image, ImageFilter
+import sys
 def imageprepare(argv):
     """
     This function returns the pixel values.
@@ -44,4 +45,4 @@ def imageprepare(argv):
     #normalize pixels to 0 and 1. 0 is pure white, 1 is pure black.
     tva = [ (255-x)*1.0/255.0 for x in tv] 
     return tva
-    #print(tva)
+#print(imageprepare(sys.argv[1]))
