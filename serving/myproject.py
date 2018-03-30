@@ -57,7 +57,7 @@ def index():
             else:
                 return "no file received!"
 
-    start = time.time()
+        start = time.time()
 
 	servingrequest = predict_pb2.PredictRequest()
 		
