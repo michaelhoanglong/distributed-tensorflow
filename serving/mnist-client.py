@@ -54,7 +54,7 @@ def main():
             tmp = img[i][j]
             px = 0
             for item in tmp:
-                if(item != 0):
+                if(item > 5):
                     px = 1
                     break
             imgarray.append(px)
