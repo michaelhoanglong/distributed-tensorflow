@@ -37,17 +37,17 @@ def index():
 			imgurl = request.form['url']
 			os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
 			img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
-		    imgarray = []
-		    for i in range(0, len(img)):
-		        for j in range(0, len(img[i])):
-		            tmp = img[i][j]
-		            px = 0
-		            for item in tmp:
-		                if(item > 5):
-		                    px = 1
-		                    break
-		            imgarray.append(px)
-		    numpyarray = np.array(imgarray, np.float32)
+			imgarray = []
+			for i in range(0, len(img)):
+			    for j in range(0, len(img[i])):
+			        tmp = img[i][j]
+			        px = 0
+			        for item in tmp:
+			            if(item > 5):
+			                px = 1
+			                break
+			        imgarray.append(px)
+			numpyarray = np.array(imgarray, np.float32)
 
 		start = time.time()
 
