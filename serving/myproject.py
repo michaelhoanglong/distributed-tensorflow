@@ -36,26 +36,28 @@ def index():
             numpyarray = np.array(img, np.float32)
 	    print("Expected result: %d" % (2))
 	if(request.method == 'POST'):
-            file = request.files['file']
-            if file:
-                file.save(os.path.join('/home/ubuntu/serveimg/','img.jpg'))
-		#imgurl = request.form['url']
-	    	# os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
-    		#subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
-    		img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
-    		imgarray = []
-    		for i in range(0, len(img)):
-    		    for j in range(0, len(img[i])):
-    		        tmp = img[i][j]
-    		        px = 0
-    		        for item in tmp:
-    		            if(item > 5):
-    	                        px = 1
-    		                break
-    		        imgarray.append(px)
-    		numpyarray = np.array(imgarray, np.float32)
+        file = request.files['file']
+        if file:
+            file.save(os.path.join('/home/ubuntu/serveimg/','img.jpg'))
+            #imgurl = request.form['url']
+            # os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
+            #subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
+            img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
+            imgarray = []
+            for i in range(0, len(img)):
+                for j in range(0, len(img[i])):
+                    tmp = img[i][j]
+                    px = 0
+                    for item in tmp:
+                        if(item > 5):
+                                px = 1
+                            break
+                    imgarray.append(px)
+            numpyarray = np.array(imgarray, np.float32)
+        else:
+            return "no file received!"
 
-        start = time.time()
+    start = time.time()
 
 	servingrequest = predict_pb2.PredictRequest()
 		
