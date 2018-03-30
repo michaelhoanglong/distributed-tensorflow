@@ -14,7 +14,7 @@ from tensorflow_serving.apis import prediction_service_pb2
 from tensorflow.contrib.util import make_tensor_proto
 from tensorflow.examples.tutorials.mnist import input_data
 
-from flask import Flask
+from flask import Flask, request
 app = Flask(__name__)
 
 @app.route("/", methods = ['GET','POST'])
