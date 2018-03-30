@@ -7,6 +7,7 @@ from grpc.beta import implementations
 import tensorflow as tf
 import numpy as np
 import os
+import subprocess
 import cv2
 
 # TensorFlow serving stuff to send messages
@@ -36,7 +37,8 @@ def index():
 			print("Expected result: %d" % (2))
 		if(request.method == 'POST'):
 			imgurl = request.form['url']
-			os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
+			# os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
+			subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
 			img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
 			imgarray = []
 			for i in range(0, len(img)):
