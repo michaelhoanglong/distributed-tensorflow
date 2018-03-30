@@ -36,21 +36,25 @@ def index():
 			numpyarray = np.array(img, np.float32)
 			print("Expected result: %d" % (2))
 		if(request.method == 'POST'):
-			imgurl = request.form['url']
+			nparr = np.fromstring(request.data, np.unit8)
+			imgdecoded = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+			print(imgdecoded)
+			#imgurl = request.form['url']
 			# os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
-			subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
-			img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
-			imgarray = []
-			for i in range(0, len(img)):
-			    for j in range(0, len(img[i])):
-			        tmp = img[i][j]
-			        px = 0
-			        for item in tmp:
-			            if(item > 5):
-			                px = 1
-			                break
-			        imgarray.append(px)
-			numpyarray = np.array(imgarray, np.float32)
+			#subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
+			#img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
+			#imgarray = []
+			# for i in range(0, len(img)):
+			#     for j in range(0, len(img[i])):
+			#         tmp = img[i][j]
+			#         px = 0
+			#         for item in tmp:
+			#             if(item > 5):
+			#                 px = 1
+			#                 break
+			#         imgarray.append(px)
+			# numpyarray = np.array(imgarray, np.float32)
+			return "test"
 
 		start = time.time()
 
