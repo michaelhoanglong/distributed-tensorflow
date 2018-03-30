@@ -7,6 +7,7 @@ from grpc.beta import implementations
 import tensorflow as tf
 import numpy as np
 import os
+import cv2
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
