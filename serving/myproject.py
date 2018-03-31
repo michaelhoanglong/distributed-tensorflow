@@ -9,6 +9,7 @@ import numpy as np
 import os
 import subprocess
 import cv2
+import traceback
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
@@ -18,6 +19,14 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 from flask import Flask, request
 app = Flask(__name__)
+
+#@app.after_request
+#def after_request(response):
+#    response.headers.add('Access-Control-Allow-Origin', '*')
+#    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+#    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+#    return response
+
 
 @app.route("/", methods = ['GET','POST'])
 def index():
@@ -36,12 +45,12 @@ def index():
             numpyarray = np.array(img, np.float32)
 	    print("Expected result: %d" % (2))
 	if(request.method == 'POST'):
-            file = request.files['file']
-            if file:
-                file.save(os.path.join('/home/ubuntu/serveimg/','img.jpg'))
-                #imgurl = request.form['url']
-                # os.system("wget -O /home/ubuntu/serveimg/img.jpg " + imgurl)
-                #subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
+            imgurl = request.form.get('imageUrl')
+            os.system("mkdir test")
+            subprocessCall = subprocess.check_call(["wget", "-O", "img.jpg", imgurl])
+            #subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
+            if(subprocessCall == 0):
+                print("downloaded image")
                 img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
                 imgarray = []
                 for i in range(0, len(img)):
@@ -55,7 +64,7 @@ def index():
                         imgarray.append(px)
                 numpyarray = np.array(imgarray, np.float32)
             else:
-                return "no file received!"
+                return "error" 
 
         start = time.time()
 
@@ -91,7 +100,7 @@ def index():
 	return str(num_result)
     except Exception as e:
     	with open('/home/ubuntu/myproject/log.txt', 'a+') as f:
-	    error = "\n\n Internal Server Error \n" + str(e)
+	    error = "\n\n Internal Server Error \n" + str(traceback.format_exc())
 	    f.write(error)
 	    f.close()
 
