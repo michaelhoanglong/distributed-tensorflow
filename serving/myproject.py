@@ -10,6 +10,9 @@ import os
 import subprocess
 import cv2
 import traceback
+import thread
+import time
+import shutil
 
 # TensorFlow serving stuff to send messages
 from tensorflow_serving.apis import predict_pb2
@@ -27,6 +30,10 @@ app = Flask(__name__)
 #    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
 #    return response
 
+def runServingService(modelName):
+    modelNameParam = "--model_name=" + modelName
+    runServing = subprocess.check_call(["tensorflow_model_server", "--port=9000", str(modelNameParam), "--model_base_path=/home/ubuntu/model"])
+
 
 @app.route("/", methods = ['GET','POST'])
 def index():
@@ -41,15 +48,44 @@ def index():
     	# batch = dataset.train.next_batch(1)
     	# print(batch[1])
     	if(request.method == 'GET'):
-            img = [[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+            #img = [[0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
             numpyarray = np.array(img, np.float32)
 	    print("Expected result: %d" % (2))
 	if(request.method == 'POST'):
-            imgurl = request.form.get('imageUrl')
-            os.system("mkdir test")
-            subprocessCall = subprocess.check_call(["wget", "-O", "img.jpg", imgurl])
-            #subprocess.Popen(["wget","-O", "/home/ubuntu/serveimg/img.jpg",imgurl], stdout=subprocess.PIPE)
-            if(subprocessCall == 0):
+            modelUrl = request.form.get('modelUrl')
+            imgUrl = request.form.get('imageUrl')
+            modelName = request.form.get('modelName')
+            checkClearModelPath = 1
+            modelFolder = "/home/ubuntu/model"
+            if(os.listdir(modelFolder) != []): 
+                #checkClearModelPath = subprocess.check_call(["sudo", "rm", "-r", "/home/ubuntu/model/*"])  
+                for the_file in os.listdir(modelFolder):
+                    file_path = os.path.join(modelFolder, the_file)
+                    try:
+                        if os.path.isfile(file_path):
+                            os.unlink(file_path)
+                        elif os.path.isdir(file_path): shutil.rmtree(file_path)
+                    except Exception as e:
+                        raise Exception(str(e))
+
+            #if(checkClearModelPath == 0):
+            downloadModel = subprocess.check_call(["sudo", "wget", "-O", "/home/ubuntu/model/model.zip", modelUrl])
+            if(downloadModel == 0):
+                unzipModel = subprocess.check_call(["sudo", "unzip", "/home/ubuntu/model/model.zip", "-d", "/home/ubuntu/model/"])
+                if(unzipModel == 0):
+                    try:
+                        thread.start_new_thread(runServingService, (modelName,))
+                    except Exception as e:
+                        raise Exception(str(e))
+
+            checkRunningProcess = ""
+            while("tensorflow_model_server" not in checkRunningProcess):
+                checkRunningProcess = subprocess.check_output(['ps', '-au'])
+                print(checkRunningProcess)
+            
+            time.sleep(1.5)
+            downloadImg = subprocess.check_call(["sudo", "wget", "-O", "/home/ubuntu/serveimg/img.jpg", imgUrl])
+            if(downloadImg == 0):
                 print("downloaded image")
                 img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
                 imgarray = []
@@ -64,13 +100,13 @@ def index():
                         imgarray.append(px)
                 numpyarray = np.array(imgarray, np.float32)
             else:
-                return "error" 
+                raise Exception("cannot download image") 
 
         start = time.time()
 
 	servingrequest = predict_pb2.PredictRequest()
 		
-	servingrequest.model_spec.name = 'mnist'
+	servingrequest.model_spec.name = modelName
 	    
 	servingrequest.model_spec.signature_name = 'predict_images'
 
