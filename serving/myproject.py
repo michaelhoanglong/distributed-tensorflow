@@ -32,7 +32,12 @@ app = Flask(__name__)
 
 def runServingService(modelName):
     modelNameParam = "--model_name=" + modelName
-    runServing = subprocess.check_call(["tensorflow_model_server", "--port=9000", str(modelNameParam), "--model_base_path=/home/ubuntu/model"])
+    try:
+        killPreviousProcess = subprocess.check_call(["sudo", "killall", "-9", "tensorflow_model_server"])
+    except Exception as e:
+        print("pass exception")
+    finally:
+        runServing = subprocess.check_call(["tensorflow_model_server", "--port=9000", str(modelNameParam), "--model_base_path=/home/ubuntu/model"])
 
 
 @app.route("/", methods = ['GET','POST'])
@@ -69,9 +74,9 @@ def index():
                         raise Exception(str(e))
 
             #if(checkClearModelPath == 0):
-            downloadModel = subprocess.check_call(["sudo", "wget", "-O", "/home/ubuntu/model/model.zip", modelUrl])
+            downloadModel = subprocess.check_call(["wget", "-O", "/home/ubuntu/model/model.zip", modelUrl])
             if(downloadModel == 0):
-                unzipModel = subprocess.check_call(["sudo", "unzip", "/home/ubuntu/model/model.zip", "-d", "/home/ubuntu/model/"])
+                unzipModel = subprocess.check_call(["unzip", "/home/ubuntu/model/model.zip", "-d", "/home/ubuntu/model/"])
                 if(unzipModel == 0):
                     try:
                         thread.start_new_thread(runServingService, (modelName,))
@@ -84,7 +89,7 @@ def index():
                 print(checkRunningProcess)
             
             time.sleep(1.5)
-            downloadImg = subprocess.check_call(["sudo", "wget", "-O", "/home/ubuntu/serveimg/img.jpg", imgUrl])
+            downloadImg = subprocess.check_call(["wget", "-O", "/home/ubuntu/serveimg/img.jpg", imgUrl])
             if(downloadImg == 0):
                 print("downloaded image")
                 img = cv2.imread('/home/ubuntu/serveimg/img.jpg')
