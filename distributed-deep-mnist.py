@@ -6,6 +6,7 @@ import errno
 import stat
 import logging
 import zipfile
+import time
 import trainingalgorithm
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -107,6 +108,7 @@ def main(_):
     #os.makedirs(FLAGS.log_dir, exist_ok=True)
     f = open(FLAGS.log_dir + '/output.txt' , 'w+')
     sys.stdout = f
+    start_time = time.time()
 
     try:
       # Assigns ops to the local worker by default.
@@ -195,7 +197,9 @@ def main(_):
           #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
           i = i + 1
+        stop_time = time.time()
         print('Training completed!')
+        print('Excution time: %s' % (stop_time - start_time))
         if FLAGS.task_index == 0:
           saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
