@@ -199,6 +199,8 @@ def main(_):
           i = i + 1
         stop_time = time.time()
         print('Training completed!')
+        print('Number of parameter servers: %s' % len(ps_hosts))
+        print('Number of workers: %s' % len(worker_hosts))
         print('Excution time: %s' % (stop_time - start_time))
         if FLAGS.task_index == 0:
           saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
