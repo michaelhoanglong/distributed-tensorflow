@@ -57,15 +57,15 @@ def main_network(images, training):
     # It is very similar to the previous tutorials, except
     # the use of so-called batch-normalization in the first layer.
     with pt.defaults_scope(activation_fn=tf.nn.relu, phase=phase):
-        	y_pred, loss = x_pretty
-            conv2d(kernel=5, depth=64, name='layer_conv1', batch_normalize=True)
-            max_pool(kernel=2, stride=2)
-            conv2d(kernel=5, depth=64, name='layer_conv2')
-            max_pool(kernel=2, stride=2)
-            flatten()
-            fully_connected(size=256, name='layer_fc1')
-            fully_connected(size=128, name='layer_fc2')
-            softmax_classifier(num_classes=num_classes, labels=y_true)
+    	y_pred, loss = x_pretty
+        conv2d(kernel=5, depth=64, name='layer_conv1', batch_normalize=True)
+        max_pool(kernel=2, stride=2)
+        conv2d(kernel=5, depth=64, name='layer_conv2')
+        max_pool(kernel=2, stride=2)
+        flatten()
+        fully_connected(size=256, name='layer_fc1')
+        fully_connected(size=128, name='layer_fc2')
+        softmax_classifier(num_classes=num_classes, labels=y_true)
 
     return y_pred, loss
 def trainingAlgorithm(training):
