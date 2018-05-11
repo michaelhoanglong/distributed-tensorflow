@@ -217,7 +217,7 @@ def main(_):
           saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
-    finally:
+    #finally:
         # sys.stdout = orig_stdout
         # f.close()
 
