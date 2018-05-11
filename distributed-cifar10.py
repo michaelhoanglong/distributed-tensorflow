@@ -106,8 +106,8 @@ def main(_):
     #print to output file
     orig_stdout = sys.stdout
     #os.makedirs(FLAGS.log_dir, exist_ok=True)
-    f = open(FLAGS.log_dir + '/output.txt' , 'w+')
-    sys.stdout = f
+    # f = open(FLAGS.log_dir + '/output.txt' , 'w+')
+    # sys.stdout = f
     start_time = time.time()
 
     try:
@@ -216,8 +216,8 @@ def main(_):
     except Exception as e:
       print(traceback.format_exc())
     finally:
-      sys.stdout = orig_stdout
-      f.close()
+      # sys.stdout = orig_stdout
+      # f.close()
 
     os.system("cat " + FLAGS.log_dir + "/output.txt")
     if(FLAGS.task_index == 0):
