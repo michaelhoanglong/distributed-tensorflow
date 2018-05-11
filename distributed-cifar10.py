@@ -132,12 +132,14 @@ def main(_):
 
         # TODO: Change this 3 lines for new model implementation
         # x = trainingalgorithm.getDataTensorPlaceHolder()
-        serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
+        x = tf.placeholder(tf.float32, [None, img_size, img_size, num_channels])
+        #serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
         #feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
-        feature_configs = {'x': tf.FixedLenFeature(shape=[None, img_size, img_size, num_channels], dtype=tf.float32),}
-        tf_example = tf.parse_example(serialized_tf_example, feature_configs)
-        x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
-        y_ = trainingalgorithm.getLabelTensorPlaceHolder()
+        #feature_configs = {'x': tf.FixedLenFeature(shape=[None, img_size, img_size, num_channels], dtype=tf.float32),}
+        #tf_example = tf.parse_example(serialized_tf_example, feature_configs)
+        #x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
+        #y_ = trainingalgorithm.getLabelTensorPlaceHolder()
+        y_ = tf.placeholder(tf.float32, [None, 10])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         import cifar10algo
         y_conv = cifar10algo.trainingAlgorithm(x)
@@ -216,8 +218,8 @@ def main(_):
     except Exception as e:
       print(traceback.format_exc())
     finally:
-      # sys.stdout = orig_stdout
-      # f.close()
+        # sys.stdout = orig_stdout
+        # f.close()
 
     os.system("cat " + FLAGS.log_dir + "/output.txt")
     if(FLAGS.task_index == 0):
