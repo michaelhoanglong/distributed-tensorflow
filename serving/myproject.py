@@ -60,6 +60,7 @@ def index():
             modelUrl = request.form.get('modelUrl')
             imgUrl = request.form.get('imageUrl')
             modelName = request.form.get('modelName')
+            imageSize = request.form.get('imageSize')
             checkClearModelPath = 1
             modelFolder = "/home/ubuntu/model"
             if(os.listdir(modelFolder) != []): 
@@ -116,8 +117,7 @@ def index():
 	servingrequest.model_spec.signature_name = 'predict_images'
 
 	#servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 784]))
-
-        servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 3072]))
+    servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, imageSize]))
 
 		
 	result = stub.Predict(servingrequest, 60.0)  # 60 secs timeout
