@@ -6,6 +6,7 @@ def pre_process_image(image, training):
     
     if training:
         # For training, add the following to the TensorFlow graph.
+        img_size_cropped = 24
 
         # Randomly crop the input image.
         image = tf.random_crop(image, size=[img_size_cropped, img_size_cropped, num_channels])
