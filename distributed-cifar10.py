@@ -7,7 +7,6 @@ import stat
 import logging
 import zipfile
 import time
-import math
 import trainingalgorithm
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -205,29 +204,26 @@ def main(_):
                                              hooks=hooks) as mon_sess:
         print("start session")
         i = 0
-        while not mon_sess.should_stop():
+        cur_batch = 0
+        while not mon_sess.should_stop() and cur_batch < 100:
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
+          cur_batch = 0
           print("start debug")
-          batch_size = int(math.ceil(len(train_x) / _BATCH_SIZE))
-          for s in range(batch_size):
-            batch_xs = train_x[s*_BATCH_SIZE: (s+1)*_BATCH_SIZE]
-            batch_ys = train_y[s*_BATCH_SIZE: (s+1)*_BATCH_SIZE]
-
-            batch = []
-            batch[0] = batch_xs
-            batch[1] = batch_ys
-            if i % 100 == 0:
-              # train_accuracy = mon_sess.run(accuracy, feed_dict={
-              #     x: batch[0], y_: batch[1], keep_prob: 0.9})
-              train_accuracy = mon_sess.run(accuracy, feed_dict={
-                  x: batch[0], y_: batch[1]})
-              print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-            #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-            mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
+          batch = []
+          batch[0] = train_x[cur_batch : cur_batch+50]
+          batch[1] = train_y[cur_batch : cur_batch+50]
+          if i % 100 == 0:
+            # train_accuracy = mon_sess.run(accuracy, feed_dict={
+            #     x: batch[0], y_: batch[1], keep_prob: 0.9})
+            train_accuracy = mon_sess.run(accuracy, feed_dict={
+                x: batch[0], y_: batch[1]})
             print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-            i = i + 1
-        # stop_time = time.time()
+          #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+          mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
+          print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
+          i = i + 1
+        #stop_time = time.time()
         print('Training completed!')
         print('Number of parameter servers: %s' % len(ps_hosts))
         print('Number of workers: %s' % len(worker_hosts))
