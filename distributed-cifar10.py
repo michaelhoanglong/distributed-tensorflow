@@ -205,7 +205,6 @@ def main(_):
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
           cur_batch = 0
-          print(len(train_x))
           batch_x = train_x[cur_batch : cur_batch+50]
           batch_y = train_y[cur_batch : cur_batch+50]
           if i % 100 == 0:
@@ -217,7 +216,7 @@ def main(_):
           #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           mon_sess.run(train_step, feed_dict={x: batch_x, y_: batch_y})
           i = i + 1
-        #stop_time = time.time()
+        stop_time = time.time()
         print('Training completed!')
         print('Number of parameter servers: %s' % len(ps_hosts))
         print('Number of workers: %s' % len(worker_hosts))
