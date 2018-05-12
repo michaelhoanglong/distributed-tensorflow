@@ -209,7 +209,7 @@ def main(_):
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
           cur_batch = 0
-          print("start debug")
+          print(len(train_x))
           batch = []
           batch[0] = train_x[cur_batch : cur_batch+50]
           batch[1] = train_y[cur_batch : cur_batch+50]
