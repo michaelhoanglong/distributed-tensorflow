@@ -7,6 +7,7 @@ import stat
 import logging
 import zipfile
 import time
+import math
 import trainingalgorithm
 
 from tensorflow.examples.tutorials.mnist import input_data
