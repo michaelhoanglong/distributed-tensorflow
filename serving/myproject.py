@@ -115,7 +115,10 @@ def index():
 	    
 	servingrequest.model_spec.signature_name = 'predict_images'
 
-	servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 784]))
+	#servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 784]))
+
+        servingrequest.inputs['images'].CopyFrom(make_tensor_proto(numpyarray, shape=[1, 3072]))
+
 		
 	result = stub.Predict(servingrequest, 60.0)  # 60 secs timeout
 
