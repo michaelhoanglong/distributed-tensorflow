@@ -172,7 +172,7 @@ def main(_):
 
 
       # The StopAtStepHook handles stopping after running given steps.
-      hooks=[tf.train.StopAtStepHook(last_step=1000)]
+      hooks=[tf.train.StopAtStepHook(last_step=10000)]
 
       # The MonitoredTrainingSession takes care of session initialization,
       # restoring from a checkpoint, saving to a checkpoint, and closing when done
