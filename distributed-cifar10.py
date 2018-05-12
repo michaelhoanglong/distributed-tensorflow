@@ -118,21 +118,23 @@ def main(_):
 
         # Import data
         #dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
-        import cifar10
-        cifar10.maybe_download_and_extract()
-        class_names = cifar10.load_class_names()
-        images_train, cls_train, labels_train = cifar10.load_training_data()
-        images_test, cls_test, labels_test = cifar10.load_test_data()
-        from cifar10 import img_size, num_channels, num_classes
-        img_size_cropped = 24
-
+        # PARAMS
+        _BATCH_SIZE = 128
+        _IMAGE_SIZE = 32
+        _IMAGE_CHANNELS = 3
+        _NUM_CLASSES = 10
+        from data import get_data_set
+        train_x, train_y = get_data_set("train")
+        test_x, test_y = get_data_set("test")
+       
+        
         # Build Deep MNIST model...
         # keys_placeholder = tf.placeholder(tf.int32, shape=[None, 1])
         # keys = tf.identity(keys_placeholder)
 
         # TODO: Change this 3 lines for new model implementation
         # x = trainingalgorithm.getDataTensorPlaceHolder()
-        x = tf.placeholder(tf.float32, [None, img_size, img_size, num_channels])
+        x = tf.placeholder(tf.float32, shape=[None, _IMAGE_SIZE * _IMAGE_SIZE * _IMAGE_CHANNELS])
         x = tf.identity(x, name='x')
         #serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
         #feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
@@ -142,10 +144,13 @@ def main(_):
         #y_ = trainingalgorithm.getLabelTensorPlaceHolder()
         y_ = tf.placeholder(tf.float32, [None, 10])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
-        import cifar10algo
-        y_conv = cifar10algo.trainingAlgorithm(x,training=True)
+        from model import model, lr
+        x, y, y_conv, y_pred_cls, global_step_notuse, learning_rate_notuse = model(x,y_)
         y_conv = tf.identity(y_conv, name='y_conv')
         #keep_prob = tf.identity(keep_prob, name='keep_prob')
+        
+        
+
 
         cross_entropy = tf.reduce_mean(
             tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))
@@ -199,7 +204,13 @@ def main(_):
         while not mon_sess.should_stop():
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
-          batch = images_trains.next_batch(50)
+          train_batch_size = 50
+          idx = np.random.choice(num_images,
+                           size=train_batch_size,
+                           replace=False)
+          batch = []
+          batch[0] = images_train[idx, :, :, :]
+          batch[1] = labels_train[idx, :]
           if i % 100 == 0:
             # train_accuracy = mon_sess.run(accuracy, feed_dict={
             #     x: batch[0], y_: batch[1], keep_prob: 0.9})
