@@ -15,12 +15,12 @@ def get_data_set(name="train"):
 
     folder_name = "cifar_10"
 
-    f = open('./data_set/'+folder_name+'/batches.meta', 'rb')
+    f = open('/home/ubuntu/data_set/'+folder_name+'/batches.meta', 'rb')
     f.close()
 
     if name is "train":
         for i in range(5):
-            f = open('./data_set/'+folder_name+'/data_batch_' + str(i + 1), 'rb')
+            f = open('/home/ubuntu/data_set/'+folder_name+'/data_batch_' + str(i + 1), 'rb')
             datadict = pickle.load(f, encoding='latin1')
             f.close()
 
@@ -40,7 +40,7 @@ def get_data_set(name="train"):
                 y = np.concatenate((y, _Y), axis=0)
 
     elif name is "test":
-        f = open('./data_set/'+folder_name+'/test_batch', 'rb')
+        f = open('/home/ubuntu/data_set/'+folder_name+'/test_batch', 'rb')
         datadict = pickle.load(f, encoding='latin1')
         f.close()
 
