@@ -142,7 +142,7 @@ def main(_):
         y_ = tf.placeholder(tf.float32, [None, 10])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         import cifar10algo
-        y_conv = cifar10algo.trainingAlgorithm(x)
+        y_conv = cifar10algo.trainingAlgorithm(training=True)
         y_conv = tf.identity(y_conv, name='y_conv')
         #keep_prob = tf.identity(keep_prob, name='keep_prob')
 
