@@ -133,6 +133,7 @@ def main(_):
         # TODO: Change this 3 lines for new model implementation
         # x = trainingalgorithm.getDataTensorPlaceHolder()
         x = tf.placeholder(tf.float32, [None, img_size, img_size, num_channels])
+        x = tf.identity(x, name='x')
         #serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
         #feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
         #feature_configs = {'x': tf.FixedLenFeature(shape=[None, img_size, img_size, num_channels], dtype=tf.float32),}
@@ -142,7 +143,7 @@ def main(_):
         y_ = tf.placeholder(tf.float32, [None, 10])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         import cifar10algo
-        y_conv = cifar10algo.trainingAlgorithm(training=True)
+        y_conv = cifar10algo.trainingAlgorithm(x,training=True)
         y_conv = tf.identity(y_conv, name='y_conv')
         #keep_prob = tf.identity(keep_prob, name='keep_prob')
 

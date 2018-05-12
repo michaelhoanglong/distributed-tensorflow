@@ -69,7 +69,7 @@ def main_network(images, training):
             softmax_classifier(num_classes=num_classes, labels=y_true)
 
     return y_pred, loss
-def trainingAlgorithm(training):
+def trainingAlgorithm(x,training):
     # Wrap the neural network in the scope named 'network'.
     # Create new variables during training, and re-use during testing.
     with tf.variable_scope('network', reuse=not training):
