@@ -196,10 +196,11 @@ def main(_):
       # Worker with task_index = 0 is the Master Worker.
       # checkpoint_dir=FLAGS.log_dir,
       #saver = tf.train.Saver()
-
+      print("finish setting network")
       with tf.train.MonitoredTrainingSession(master=server.target,
                                              is_chief=(FLAGS.task_index == 0),
                                              hooks=hooks) as mon_sess:
+        print("start session")
         i = 0
         while not mon_sess.should_stop():
           # Run a training step asynchronously.
