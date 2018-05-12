@@ -1,5 +1,6 @@
 import prettytensor as pt
 import tensorflow as tf
+from cifar10 import img_size, num_channels, num_classes
 def pre_process_image(image, training):
     # This function takes a single image as input,
     # and a boolean whether to build the training or testing graph.
