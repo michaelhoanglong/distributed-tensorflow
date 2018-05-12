@@ -208,25 +208,25 @@ def main(_):
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
           print("start debug")
-          train_batch_size = 50
-          import numpy as np
-          idx = np.random.choice(num_images,
-                           size=train_batch_size,
-                           replace=False)
-          batch = []
-          batch[0] = images_train[idx, :, :, :]
-          batch[1] = labels_train[idx, :]
-          if i % 100 == 0:
-            # train_accuracy = mon_sess.run(accuracy, feed_dict={
-            #     x: batch[0], y_: batch[1], keep_prob: 0.9})
-            train_accuracy = mon_sess.run(accuracy, feed_dict={
-                x: batch[0], y_: batch[1]})
+          batch_size = int(math.ceil(len(train_x) / _BATCH_SIZE))
+          for s in range(batch_size):
+            batch_xs = train_x[s*_BATCH_SIZE: (s+1)*_BATCH_SIZE]
+            batch_ys = train_y[s*_BATCH_SIZE: (s+1)*_BATCH_SIZE]
+
+            batch = []
+            batch[0] = batch_xs
+            batch[1] = batch_ys
+            if i % 100 == 0:
+              # train_accuracy = mon_sess.run(accuracy, feed_dict={
+              #     x: batch[0], y_: batch[1], keep_prob: 0.9})
+              train_accuracy = mon_sess.run(accuracy, feed_dict={
+                  x: batch[0], y_: batch[1]})
+              print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
+            #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+            mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
             print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
-          mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
-          print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
-          i = i + 1
-        stop_time = time.time()
+            i = i + 1
+        # stop_time = time.time()
         print('Training completed!')
         print('Number of parameter servers: %s' % len(ps_hosts))
         print('Number of workers: %s' % len(worker_hosts))
