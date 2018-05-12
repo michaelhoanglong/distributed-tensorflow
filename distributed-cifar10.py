@@ -223,6 +223,7 @@ def main(_):
             print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
           #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
+          print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
           i = i + 1
         stop_time = time.time()
         print('Training completed!')
