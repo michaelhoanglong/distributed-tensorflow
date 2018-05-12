@@ -144,9 +144,11 @@ def main(_):
         #y_ = trainingalgorithm.getLabelTensorPlaceHolder()
         y_ = tf.placeholder(tf.float32, [None, 10])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
+        print("importing model")
         from model import model, lr
         x, y, y_conv, y_pred_cls, global_step_notuse, learning_rate_notuse = model(x,y_)
         y_conv = tf.identity(y_conv, name='y_conv')
+        print("finish building model")
         #keep_prob = tf.identity(keep_prob, name='keep_prob')
         
         
