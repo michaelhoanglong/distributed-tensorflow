@@ -104,7 +104,7 @@ def main(_):
     server.join()
   elif FLAGS.job_name == "worker":
     #print to output file
-    orig_stdout = sys.stdout
+    #orig_stdout = sys.stdout
     #os.makedirs(FLAGS.log_dir, exist_ok=True)
     # f = open(FLAGS.log_dir + '/output.txt' , 'w+')
     # sys.stdout = f
@@ -195,7 +195,7 @@ def main(_):
       # or an error occurs.
       # Worker with task_index = 0 is the Master Worker.
       # checkpoint_dir=FLAGS.log_dir,
-      saver = tf.train.Saver()
+      #saver = tf.train.Saver()
 
       with tf.train.MonitoredTrainingSession(master=server.target,
                                              is_chief=(FLAGS.task_index == 0),
@@ -226,25 +226,25 @@ def main(_):
         print('Number of parameter servers: %s' % len(ps_hosts))
         print('Number of workers: %s' % len(worker_hosts))
         print('Excution time: %s' % (stop_time - start_time))
-        if FLAGS.task_index == 0:
-          saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+        # if FLAGS.task_index == 0:
+        #   saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
     #finally:
         # sys.stdout = orig_stdout
         # f.close()
 
-    os.system("cat " + FLAGS.log_dir + "/output.txt")
-    if(FLAGS.task_index == 0):
-      try:
-        os.makedirs(FLAGS.model_dir)
-      except OSError as e:
-        if e.errno != errno.EEXIST:
-          raise
-      os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
-      os.system("cp " + FLAGS.log_dir + "/output.txt" + " " + FLAGS.model_dir)
-      zipFileName = FLAGS.model_dir + FLAGS.zip_name
-      zip(FLAGS.model_dir,zipFileName)
+    #os.system("cat " + FLAGS.log_dir + "/output.txt")
+    # if(FLAGS.task_index == 0):
+    #   try:
+    #     os.makedirs(FLAGS.model_dir)
+    #   except OSError as e:
+    #     if e.errno != errno.EEXIST:
+    #       raise
+      #os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
+      #os.system("cp " + FLAGS.log_dir + "/output.txt" + " " + FLAGS.model_dir)
+      #zipFileName = FLAGS.model_dir + FLAGS.zip_name
+      #zip(FLAGS.model_dir,zipFileName)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
