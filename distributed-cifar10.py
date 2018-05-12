@@ -204,6 +204,7 @@ def main(_):
         while not mon_sess.should_stop():
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
+          print("start debug")
           train_batch_size = 50
           idx = np.random.choice(num_images,
                            size=train_batch_size,
