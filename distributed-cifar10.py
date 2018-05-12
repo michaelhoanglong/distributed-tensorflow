@@ -209,6 +209,7 @@ def main(_):
           #batch = dataset.train.next_batch(50)
           print("start debug")
           train_batch_size = 50
+          import numpy as np
           idx = np.random.choice(num_images,
                            size=train_batch_size,
                            replace=False)
