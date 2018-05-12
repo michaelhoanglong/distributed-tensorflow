@@ -104,10 +104,10 @@ def main(_):
     server.join()
   elif FLAGS.job_name == "worker":
     #print to output file
-    #orig_stdout = sys.stdout
+    orig_stdout = sys.stdout
     #os.makedirs(FLAGS.log_dir, exist_ok=True)
-    #f = open(FLAGS.log_dir + '/output.txt' , 'w+')
-    #sys.stdout = f
+    f = open(FLAGS.log_dir + '/output.txt' , 'w+')
+    sys.stdout = f
     start_time = time.time()
 
     try:
@@ -124,11 +124,12 @@ def main(_):
         # keys = tf.identity(keys_placeholder)
 
         # TODO: Change this 3 lines for new model implementation
-        # x = trainingalgorithm.getDataTensorPlaceHolder()
-        serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
-        feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
-        tf_example = tf.parse_example(serialized_tf_example, feature_configs)
-        x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
+        x = trainingalgorithm.getDataTensorPlaceHolder()
+        x = tf.identity(x, name='x')
+        # serialized_tf_example = tf.placeholder(tf.string, name='tf_example')
+        # feature_configs = {'x': tf.FixedLenFeature(shape=[784], dtype=tf.float32),}
+        # tf_example = tf.parse_example(serialized_tf_example, feature_configs)
+        # x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
         y_ = trainingalgorithm.getLabelTensorPlaceHolder()
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         y_conv = trainingalgorithm.trainingAlgorithm(x)
@@ -172,14 +173,14 @@ def main(_):
 
 
       # The StopAtStepHook handles stopping after running given steps.
-      hooks=[tf.train.StopAtStepHook(last_step=1000)]
+      hooks=[tf.train.StopAtStepHook(last_step=100)]
 
       # The MonitoredTrainingSession takes care of session initialization,
       # restoring from a checkpoint, saving to a checkpoint, and closing when done
       # or an error occurs.
       # Worker with task_index = 0 is the Master Worker.
       # checkpoint_dir=FLAGS.log_dir,
-      #saver = tf.train.Saver()
+      saver = tf.train.Saver()
 
       with tf.train.MonitoredTrainingSession(master=server.target,
                                              is_chief=(FLAGS.task_index == 0),
@@ -196,32 +197,31 @@ def main(_):
             print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
           #mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
           mon_sess.run(train_step, feed_dict={x: batch[0], y_: batch[1]})
-          print('Global_step %s, task:%d_step %d, training accuracy %g' % (tf.train.global_step(mon_sess, global_step), FLAGS.task_index, i, train_accuracy))
           i = i + 1
         stop_time = time.time()
         print('Training completed!')
         print('Number of parameter servers: %s' % len(ps_hosts))
         print('Number of workers: %s' % len(worker_hosts))
         print('Excution time: %s' % (stop_time - start_time))
-        # if FLAGS.task_index == 0:
-        #   saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
+        if FLAGS.task_index == 0:
+          saved_model(get_session(mon_sess), prediction_signature, legacy_init_op)
     except Exception as e:
       print(traceback.format_exc())
-    # finally:
-    #   sys.stdout = orig_stdout
-    #   f.close()
+    finally:
+      sys.stdout = orig_stdout
+      f.close()
 
-    # os.system("cat " + FLAGS.log_dir + "/output.txt")
-    # if(FLAGS.task_index == 0):
-    #   try:
-    #     os.makedirs(FLAGS.model_dir)
-    #   except OSError as e:
-    #     if e.errno != errno.EEXIST:
-    #       raise
-    #   os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
-    #   os.system("cp " + FLAGS.log_dir + "/output.txt" + " " + FLAGS.model_dir)
-    #   zipFileName = FLAGS.model_dir + FLAGS.zip_name
-    #   zip(FLAGS.model_dir,zipFileName)
+    os.system("cat " + FLAGS.log_dir + "/output.txt")
+    if(FLAGS.task_index == 0):
+      try:
+        os.makedirs(FLAGS.model_dir)
+      except OSError as e:
+        if e.errno != errno.EEXIST:
+          raise
+      os.system("cp " + FLAGS.log_dir + "/distributed-tensorflow/trainingalgorithm.py" + " " + FLAGS.model_dir)
+      os.system("cp " + FLAGS.log_dir + "/output.txt" + " " + FLAGS.model_dir)
+      zipFileName = FLAGS.model_dir + FLAGS.zip_name
+      zip(FLAGS.model_dir,zipFileName)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
