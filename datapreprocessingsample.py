@@ -1,6 +1,6 @@
 #MNIST
 from tensorflow.examples.tutorials.mnist import input_data
-dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+dataset = input_data.read_data_sets("/home/ubuntu/data_set", one_hot=True)
 
 def getImageData():
 	imageData = dataset.train.images
