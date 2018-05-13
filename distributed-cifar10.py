@@ -119,7 +119,6 @@ def main(_):
         # Import data
         #dataset = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
         # PARAMS
-        _BATCH_SIZE = 128
         _IMAGE_SIZE = 32
         _IMAGE_CHANNELS = 3
         _NUM_CLASSES = 10
@@ -142,7 +141,7 @@ def main(_):
         #tf_example = tf.parse_example(serialized_tf_example, feature_configs)
         #x = tf.identity(tf_example['x'], name='x')  # use tf.identity() to assign name
         #y_ = trainingalgorithm.getLabelTensorPlaceHolder()
-        y_ = tf.placeholder(tf.float32, [None, 10])
+        y_ = tf.placeholder(tf.float32, [None, _NUM_CLASSES])
         #y_conv, keep_prob = trainingalgorithm.trainingAlgorithm(x)
         from model import model, lr
         x, y, y_conv, y_pred_cls, global_step_notuse, learning_rate_notuse = model(x,y_)
@@ -188,7 +187,7 @@ def main(_):
 
 
       # The StopAtStepHook handles stopping after running given steps.
-      hooks=[tf.train.StopAtStepHook(last_step=10000)]
+      hooks=[tf.train.StopAtStepHook(last_step=1000)]
 
       # The MonitoredTrainingSession takes care of session initialization,
       # restoring from a checkpoint, saving to a checkpoint, and closing when done
@@ -201,12 +200,14 @@ def main(_):
                                              hooks=hooks) as mon_sess:
         i = 0
         cur_batch = 0
-        while not mon_sess.should_stop() and cur_batch < 1000:
+        while not mon_sess.should_stop():
           # Run a training step asynchronously.
           #batch = dataset.train.next_batch(50)
-          cur_batch = 0
+          if(cur_batch >= len(train_x)):
+            cur_batch = 0
           batch_x = train_x[cur_batch : cur_batch+50]
           batch_y = train_y[cur_batch : cur_batch+50]
+          cur_batch = cur_batch+50
           if i % 100 == 0:
             # train_accuracy = mon_sess.run(accuracy, feed_dict={
             #     x: batch[0], y_: batch[1], keep_prob: 0.9})
