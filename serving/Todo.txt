@@ -1,0 +1,20 @@
+# Run Application: (max 6 instances)
+	Can only demo 1 ps 1 wk each case
+	+ For Mnist:
+		- Copy Data Preprocessing from datapreprocessingsample.py for MNIST
+		- Copy Training Algorithm from trainingalgorithmsample.py for MNIST
+		- Run Training
+	+ For CIFAR-10:
+		- Copy Data Preprocessing from datapreprocessingsample.py for CIFAR-10
+		- Copy Training Algorithm from trainingalgorithmsample.py for CIFAR-10
+		- Run Training
+
+# Serving:
+	+ Start GUNICORN SERVER: 
+		gunicorn --bind 0.0.0.0:1500 wsgi:app
+	+ Get model link from trained model:
+		- MNIST Final model: https://s3-ap-southeast-1.amazonaws.com/michaelfyp/MnistFinal/MnistFinal_13.05.2018_04.55.35model.zip
+		- CIFAR-10 Final model: https://s3-ap-southeast-1.amazonaws.com/michaelfyp/Cifar10Final/Cifar10_13.05.2018_17.02.02model.zip
+	+ image link: 
+		- MNIST number 2: https://s3-ap-southeast-1.amazonaws.com/michaelfyp/no_2.jpg
+		- CIFAR-10 ship: https://s3-ap-southeast-1.amazonaws.com/michaelfyp/ship.png
