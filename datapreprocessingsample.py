@@ -1,6 +1,6 @@
 #MNIST
 from tensorflow.examples.tutorials.mnist import input_data
-dataset = input_data.read_data_sets("/home/ubuntu/data_set", one_hot=True)
+dataset = input_data.read_data_sets('/home/ubuntu/data_set', one_hot=True)
 
 def getImageData():
 	imageData = dataset.train.images
@@ -12,8 +12,8 @@ def getLabelData():
 
 #CIFAR-10
 from additionalinfo import get_data_set
-train_x, train_y = get_data_set("train")
-test_x, test_y = get_data_set("test")
+train_x, train_y = get_data_set('train')
+test_x, test_y = get_data_set('test')
 
 def getImageData():
 	imageData = train_x
